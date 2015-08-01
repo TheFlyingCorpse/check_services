@@ -90,6 +90,7 @@
   <ItemGroup>
     <Compile Include="icinga2clr.cs" />
     <Compile Include="IcingaSerializer.cs" />
+    <Compile Include="ProcessPerfCounters.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReadableSerializer.cs" />
