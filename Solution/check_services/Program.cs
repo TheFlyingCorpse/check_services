@@ -1,4 +1,4 @@
-﻿using Fclp;
+﻿using Mono.Options;
 using Icinga;
 using Microsoft.VisualBasic.FileIO;
 using Microsoft.Win32;
@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Principal;
 using System.ServiceProcess;
+using MonitoringPluginsForWindows;
 
 namespace MonitoringPluginsForWindows
 {
@@ -29,6 +30,7 @@ namespace MonitoringPluginsForWindows
         private static List<string> listServiceOutput = new List<string>();
         private static List<WinServiceDefined> listWinServicesFromDefinition = new List<WinServiceDefined>();
         private static List<WinServiceActual> listWinServicesOnComputer = new List<WinServiceActual>();
+        private static List<string> listServicePerfCounters = new List<string>();
 
         private static int iRegKeyStart = 0;
         private static int iRegKeyDelayedAutoStart = 0;
@@ -41,7 +43,7 @@ namespace MonitoringPluginsForWindows
         private static string strImagePath = "";
         private static string strResolvedImagePath = "";
         private static string strFileFormat = "CSV";
-        private static string strCategoryFilePath = "unspecifed";
+        private static string strCategoryFilePath = "unspecified";
 
         private static bool errorServices = false;
         private static bool do_debug = false;
@@ -94,6 +96,7 @@ namespace MonitoringPluginsForWindows
 
             bool do_inventory = false;
             bool do_services = false;
+            bool do_show_help = false;
             bool do_all_running_only = false;
             bool do_all_starttypes = false;
             bool do_hide_long_output = false;
@@ -104,7 +107,7 @@ namespace MonitoringPluginsForWindows
             string inventory_format = "readable";
             string inventory_level = "normal";
             string expected_state = "Running";
-            string split_by = " ";
+            string split_by = ",";
 
             int delayed_grace_duration = 60;
 
@@ -121,147 +124,99 @@ namespace MonitoringPluginsForWindows
             List<string> temp_services_in_supporting_category = new List<string>();
             List<string> temp_services_in_thirdparty_category = new List<string>();
             List<string> temp_services_in_ignored_category = new List<string>();
+            string temp2_excluded_services;
 
-            var p = GetP();
+            var p = new OptionSet()
+            {
+                { "i|inventory", "Provide the inventory",
+                    v => { do_inventory = (v != null); } },
+                { "c|check-services", "Check the health status of the local services",
+                    v => { do_services = (v != null); } },
+                { "category=", "Category to check, default is ThirdParty",
+                    v => temp_categories.Add (v)},
+                { "excluded-svc=", "Exclude this service",
+                    v => temp_excluded_services.Add (v)},
+                { "included-svc=", "Excplicity include this service",
+                    v => temp_included_services.Add (v)},
+                { "stopped-services=", "This service should be stopped",
+                    v => temp_stopped_services.Add (v)},
+                { "running-services=", "Override CSV, this service should be running",
+                    v => temp_running_services.Add (v)},
+                { "inv-format=", "Inventory output format, default is readable, available are csv,readable,i2conf",
+                    v => inventory_format = v },
+                { "inv-level=", "Inventory level, normal or full",
+                    v => inventory_level = v },
+                { "inv-all-running", "Inventory only the running services",
+                    v => { do_all_running_only = (v != null); } },
+                { "inv-hide-empty", "Hide empty vars from inventory output.",
+                    v => { do_hide_empty_vars = (v != null); } },
+                { "svc-in-sys-category=", "Set category of specified service to System",
+                    v => temp_services_in_system_category.Add (v)},
+                { "svc-in-ess-category=", "Set category of specified service to Essential",
+                    v => temp_services_in_essential_category.Add (v)},
+                { "svc-in-role-category=", "Set category of specified service to Role",
+                    v => temp_services_in_role_category.Add (v)},
+                { "svc-in-3rd-category=", "Set category of specified service to ThirdParty",
+                    v => temp_services_in_thirdparty_category.Add (v)},
+                { "svc-in-sup-category=", "Set category of specified service to Supporting",
+                    v => temp_services_in_supporting_category.Add (v)},
+                { "svc-in-ign-category=", "Set category of specified service to Ingored",
+                    v => temp_services_in_ignored_category.Add (v)},
+                { "warn-on-category=", "Warn on the specified category. Default is Supporting",
+                    v => temp_warn_categories.Add (v)},
+                { "check-all-starttypes", "Check all StartTypes against specified Category, not only Automatic",
+                    v => { do_all_starttypes = (v != null); } },
+                { "perfcounter", "Extra performance counters, use with caution",
+                    v => { do_verbose = (v != null); } },
+                { "delayed-grace=", "Set gracetime for Automatic (Delayed) services after bootup before they must be started",
+                    (int v) => delayed_grace_duration = v },
+                { "hide-long-output", "Hide verbose output from the --check-service command, simple output",
+                    v => { do_hide_long_output = (v != null); } },
+                { "hide-category", "Hide category from the normal output from the --check-service command",
+                    v => { do_hide_category_from_output = (v != null); } },
+                { "expected-state=", "Set the expected state for the service, used primarly with --single-service option",
+                    v => expected_state = v },
+                { "split-by=", "Alternative character to split input options VALUES with",
+                    v => split_by = v },
+                { "single-check", "Specifies that only one Service is to be checked, simplifies output of perfdata and perfcounters",
+                    v => { do_single_check = (v != null); } },
+                { "icinga2", "Set mode to be from icinga2 (WIP)",
+                    v => { do_i2 = (v != null); } },
+                { "v|verbose", "Verbose output",
+                    v => { do_verbose = (v != null); } },
+                { "d|debug", "Debug output",
+                    v => { do_debug = (v != null); } },
+                { "h|help", "Show this help",
+                    v => { do_show_help = (v != null); } }
+            };
 
-            p.Setup<bool>('A', "inventory")
-                .WithDescription("\tSwitch to use to provide inventory instead of checking for the health.")
-                .Callback(value => do_inventory = value);
+            ////p.Setup<string>('y', "file-format")
+            ////    .Callback(value => strFileFormat = value)
+            ////    .WithDescription("\tAdvanced: Argument to specify format of the file path given in category-file, assumes CSV if nothing else is specified")
+            ////    .SetDefault("csv");
 
-            p.Setup<bool>('B', "check-service")
-                .Callback(value => do_services = value)
-                .WithDescription("\tSwitch to use to check the health status of the local services")
-                .SetDefault(false);
+            ////p.Setup<string>('Y', "category-file")
+            ////    .Callback(value => strCategoryFilePath = value)
+            ////    .WithDescription("\tAdvanced: Argument to provide for both inventory and checks a category file that provides categories for the returned inventory or the categories switch to exclude everything not in those categories.")
+            ////    .SetDefault("unspecified");
 
-            p.Setup<List<string>>('C', "categories")
-                .WithDescription("\tArgument, which categories to check, valid options are: Basic(includes the 4 next categories), System, Essential, Role, Supporting, ThirdParty(default), Ignored(not included in all).")
-                .Callback(items => temp_categories = items);
-
-            p.Setup<string>('E', "inv-level")
-                .Callback(value => inventory_level = value)
-                .WithDescription("\tArgument to change the level of output. Default is 'normal', available options are 'normal','full'")
-                .SetDefault("normal");
-
-            p.Setup<string>('f', "inv-format")
-                .Callback(value => inventory_format = value)
-                .WithDescription("\tArgument to provide output of the inventory in other formats, valid options are 'readable', 'csv', 'i2conf' and 'json'")
-                .SetDefault("readable");
-
-            p.Setup<List<string>>('H', "excluded-services")
-                .WithDescription("Argument, excludes services from checks and inventory. Provide multiple with spaces between")
-                .Callback(items => temp_excluded_services = items);
-
-            p.Setup<List<string>>('i', "included-services")
-                .WithDescription("Argument, includes services to check while all other services are excluded, affects both checks and inventory. Provide multiple with spaces between")
-                .Callback(items => temp_included_services = items);
-
-            p.Setup<List<string>>('I', "stopped-services")
-                .WithDescription("Argument, these services are checked that they are stopped. Provide multiple with spaces between")
-                .Callback(items => temp_stopped_services = items);
-
-            p.Setup<List<string>>('j', "running-services")
-                .WithDescription("Argument, these services are checked that they are started. Provide multiple with spaces between")
-                .Callback(items => temp_running_services = items);
-
-            p.Setup<List<string>>('J', "svc-in-sys-category")
-                .WithDescription("Argument to set one or more services to the be included in the System category for both check and inventory.")
-                .Callback(items => temp_services_in_system_category = items);
-
-            p.Setup<List<string>>('k', "svc-in-ess-category")
-                .WithDescription("Argument to set one or more services to the be included in the Essential category for both check and inventory")
-                .Callback(items => temp_services_in_essential_category = items);
-
-            p.Setup<List<string>>('K', "svc-in-role-category")
-                .WithDescription("Argument to set one or more services to the be included in the Role category for both check and inventory")
-                .Callback(items => temp_services_in_role_category = items);
-
-            p.Setup<List<string>>('l', "svc-in-sup-category")
-                .WithDescription("Argument to set one or more services to the be included in the Supporting category for both check and inventory")
-                .Callback(items => temp_services_in_supporting_category = items);
-
-            p.Setup<List<string>>('L', "svc-in-3rd-category")
-                .WithDescription("Argument to set one or more services to the be included in the ThirdParty category for both check and inventory")
-                .Callback(items => temp_services_in_thirdparty_category = items);
-
-            p.Setup<List<string>>('m', "svc-in-ign-category")
-                .WithDescription("Argument to set one or more services to the be included in the Ignored category for both check and inventory")
-                .Callback(items => temp_services_in_ignored_category = items);
-
-            p.Setup<bool>('M', "inv-all-running")
-                .WithDescription("Switch to list for inventory all Services running in the Categories, not only 'Automatic' services.")
-                .Callback(value => do_all_running_only = value);
-
-            p.Setup<bool>('n', "check-all-starttypes")
-                .WithDescription("Switch to check all Services in the Categories, not only 'Automatic' services.")
-                .Callback(value => do_all_starttypes = value);
-
-            p.Setup<int>('s', "delayed-grace")
-                .Callback(value => delayed_grace_duration = value)
-                .WithDescription("\tArgument to provide a grace time for 'Automatic (Delayed Start)' services after bootup to start within. Default value is '60' (s).")
-                .SetDefault(60);
-
-            p.Setup<bool>('u', "hide-long-output")
-                .WithDescription("Switch to hide the long service output, only prints the summary output and any services deviating from 'OK'")
-                .Callback(value => do_hide_long_output = value);
-
-            p.Setup<bool>('U', "hide-category")
-                .WithDescription("\tSwitch to hide category from output, this only applies when there is two or more categories being checked")
-                .Callback(value => do_hide_category_from_output = value);
-
-            p.Setup<string>('v', "expected-state")
-                .WithDescription("Argument used in the Icinga2 AutoApply rules, sets the expected state of the service, used with --expected-state.")
-                .Callback(value => expected_state = value);
-
-            p.Setup<List<string>>('V', "warn-on-category")
-                .WithDescription("Argument to return warning instead of critical on these ServiceCategories. Default is 'Supporting'.")
-                .Callback(items => temp_warn_categories = items);
-
-            p.Setup<bool>('w', "icinga2")
-                .WithDescription("\tUsed in the Icinga2 CommandDefinition, returns output and perfdata to the correct class. Do not use via command line.")
-                .Callback(value => do_i2 = value);
-
-            p.Setup<bool>('W', "single-check")
-                .WithDescription("\tSwitch used in the Icinga2 AutoApply rules, assumes only one service is being checked, specified via --included-services")
-                .Callback(value => do_single_check = value);
-
-            p.Setup<string>('x', "split-by")
-                .WithDescription("\tArgument used to specify what splits all Service and Category arguments. Default is a single space, ' '.")
-                .Callback(value => split_by = value);
-
-            p.Setup<bool>('X', "inv-hide-empty")
-                .Callback(value => do_hide_empty_vars = value)
-                .WithDescription("Switch to hide empty vars from inventory output.");
-
-            p.Setup<string>('y', "file-format")
-                .Callback(value => strFileFormat = value)
-                .WithDescription("\tArgument to specify format of the file path given in category-file, assumes CSV if nothing else is specified")
-                .SetDefault("csv");
-
-            p.Setup<string>('Y', "category-file")
-                .Callback(value => strCategoryFilePath = value)
-                .WithDescription("\tArgument to provide for both inventory and checks a category file that provides categories for the returned inventory or the categories switch to exclude everything not in those categories.")
-                .SetDefault("unspecified");
-
-            p.Setup<bool>('z', "verbose")
-                .Callback(value => do_verbose = value)
-                .WithDescription("\tSwitch to use when trying to figure out why a service is not included, excluded or similarly when the returned output is not as expected")
-                .SetDefault(false);
-
-            p.Setup<bool>('Z', "debug")
-                .Callback(value => do_debug = value)
-                .WithDescription("\t\tSwitch to to get maximum verbosity (for debugging)")
-                .SetDefault(false);
-
-            p.SetupHelp("?", "help")
-                .Callback(text => Console.WriteLine(text))
-                .UseForEmptyArgs()
-                .WithHeader(System.AppDomain.CurrentDomain.FriendlyName + " - Windows Service Status plugin for Icinga2, Icinga, Centreon, Shinken, Naemon and other nagios like systems.\n\tVersion: " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version);
-
-            var result = p.Parse(args);
+            List<string> extra;
+            try
+            {
+                extra = p.Parse(args);
+            }
+            catch (OptionException e)
+            {
+                Console.Write("greet: ");
+                Console.WriteLine(e.Message);
+                Console.WriteLine("Try `greet --help' for more information.");
+                return (int)ServiceState.ServiceCritical;
+            }
 
             // Return unknown if we do not check services or inventory.
             if (do_services == false && do_inventory == false)
             {
+                ShowHelp(p);
                 return (int)ServiceState.ServiceUnknown;
             }
 
@@ -313,9 +268,14 @@ namespace MonitoringPluginsForWindows
             return (int)returncode;
         }
 
-        private static FluentCommandLineParser GetP()
+        private static void ShowHelp(OptionSet p)
         {
-            return new FluentCommandLineParser();
+            Console.WriteLine("Usage: " + System.AppDomain.CurrentDomain.FriendlyName + " [OPTIONS]");
+            Console.WriteLine("This plugin checks the State of one or more services on the local machine.");
+            Console.WriteLine("You can filter for your services by using category or a combination of category and include/exclude filters. Use the same switch multiple times if you want to");
+            Console.WriteLine();
+            Console.WriteLine("Options:");
+            p.WriteOptionDescriptions(Console.Out);
         }
 
         private static string[] SplitList(List<string> items, string split_by)
@@ -835,9 +795,6 @@ namespace MonitoringPluginsForWindows
 
         public static int CheckAllServicesDeux(string inventory_level, int returncode, bool do_all_running_only, bool do_all_starttypes, int delayed_grace_duration, bool do_hide_category_from_output, bool do_single_check, string expected_state)
         {
-            ServiceController[] scServices;
-            scServices = ServiceController.GetServices();
-
             bool temp;
             outputServices = "";
 
@@ -871,6 +828,8 @@ namespace MonitoringPluginsForWindows
 
                 WinServiceActual ActualService = Actualservices.Value;
 
+                
+
                 if (warn_categories.Contains(ActualService.ServiceCategory))
                     bWarningForServiceCategory = true;
 
@@ -878,7 +837,8 @@ namespace MonitoringPluginsForWindows
                 if (do_single_check == true)
                 {
                     returncode = CheckExpectedService(returncode, ActualService, expected_state, bWarningForServiceCategory, bDelayedGracePeriod);
-                    PerfCounters(ActualService.CurrentStatus);
+                    PerfDataCounters(ActualService.CurrentStatus);
+                    listServicePerfCounters.Add(ActualService.ServiceName);
                     iNumberOfServices++;
                     bMatchedService = true;
                     break;
@@ -896,7 +856,8 @@ namespace MonitoringPluginsForWindows
                 if (stopped_services.Contains(ActualService.ServiceName))
                 {
                     returncode = CheckStoppedService(returncode, ActualService, bIncludeCategoryInOutput);
-                    PerfCounters(ActualService.CurrentStatus);
+                    PerfDataCounters(ActualService.CurrentStatus);
+                    listServicePerfCounters.Add(ActualService.ServiceName);
                     iNumberOfServices++;
                     bMatchedService = true;
                     continue;
@@ -905,7 +866,8 @@ namespace MonitoringPluginsForWindows
                 else if (running_services.Contains(ActualService.ServiceName))
                 {
                     returncode = CheckRunningService(returncode, ActualService, bIncludeCategoryInOutput);
-                    PerfCounters(ActualService.CurrentStatus);
+                    PerfDataCounters(ActualService.CurrentStatus);
+                    listServicePerfCounters.Add(ActualService.ServiceName);
                     iNumberOfServices++;
                     bMatchedService = true;
                     continue;
@@ -920,7 +882,8 @@ namespace MonitoringPluginsForWindows
                     if (ActualService.ServiceName == DefinedService.ServiceName)
                     {
                         returncode = CheckDefinedServices(returncode, ActualService, DefinedService, bDelayedGracePeriod, bIncludeCategoryInOutput, bWarningForServiceCategory);
-                        PerfCounters(ActualService.CurrentStatus);
+                        PerfDataCounters(ActualService.CurrentStatus);
+                        listServicePerfCounters.Add(ActualService.ServiceName);
                         iNumberOfServices++;
                         bMatchedService = true;
                         break;
@@ -933,7 +896,8 @@ namespace MonitoringPluginsForWindows
                 if (categories.Contains(ActualService.ServiceCategory) && ActualService.StartType == ServiceStartMode.Automatic.ToString() && bMatchedService == false)
                 {
                     returncode = CheckCategories(returncode, ActualService, bDelayedGracePeriod, bIncludeCategoryInOutput, bWarningForServiceCategory);
-                    PerfCounters(ActualService.CurrentStatus);
+                    PerfDataCounters(ActualService.CurrentStatus);
+                    listServicePerfCounters.Add(ActualService.ServiceName);
                     iNumberOfServices++;
                     continue;
                 }
@@ -1546,7 +1510,7 @@ namespace MonitoringPluginsForWindows
             return "errorInServiceCategoryLookup";
         }
 
-        public static void PerfCounters(string status)
+        public static void PerfDataCounters(string status)
         {
             // Calculate perfdata only for matches
             if (status == ServiceControllerStatus.Running.ToString())
