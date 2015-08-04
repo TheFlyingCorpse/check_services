@@ -710,7 +710,7 @@ namespace check_services
             {
                 var LocalService = ActualService.Value;
                 string i2conf = IcingaSerializer.Serialize(LocalService, Settings.bDoHideEmptyVars);
-                Console.WriteLine("vars.inv.windows.service[\"" + LocalService.ServiceName + "\"] = " + i2conf);
+                Console.WriteLine("  vars.inv.windows.service[\"" + LocalService.ServiceName + "\"] = " + i2conf);
                 Console.WriteLine("");
             }
 

@@ -15,7 +15,7 @@ internal class IcingaSerializer
         if (o.GetType() == typeof(float)) return ((float)o).ToString();
         if (o.GetType() == typeof(TimeSpan)) return (("\"" + (TimeSpan)o).ToString() + "\"");
 
-        string spacer = "  ";
+        string spacer = "    ";
         string indention = "  ";
 
         for (int i = 0; i < indent; i++)
