@@ -26,7 +26,7 @@ namespace check_services
         public static List<WinServiceDefined> listWinServicesFromDefinition = new List<WinServiceDefined>();
         public static List<WinServiceActual> listWinServicesOnComputer = new List<WinServiceActual>();
 
-        public static bool ServicesOnMachine(string inventory_level, bool do_all_running_only, bool bDoInventory)
+        public static bool ServicesOnMachine()
         {
             ServiceController[] scServices;
             scServices = ServiceController.GetServices();
@@ -46,7 +46,7 @@ namespace check_services
                     string sDisplayName = scService.DisplayName.ToString();
 
                     // Skip service for inventory if we only scare about running services in the inventory output.
-                    if (do_all_running_only == true && bDoInventory == true && scService.Status.ToString() != ServiceControllerStatus.Running.ToString())
+                    if (Settings.bDoInvAllRunningOnly == true && Settings.bDoInventory == true && scService.Status.ToString() != ServiceControllerStatus.Running.ToString())
                     {
                         if (Settings.bVerbose == true)
                             Console.WriteLine("INFO: Service is not running, skipping: " + sServiceName);
@@ -137,7 +137,7 @@ namespace check_services
                     string strImagePath = "";
                     string strResolvedImagePath = "";
 
-                    test = ServiceStartupMode(inventory_level, sServiceName, out iRegKeyStart, out bRegKeyDelayedAutoStart, out bRegKeyWOW64, out strObjectName, out strFileOwner, out strImagePath, out strResolvedImagePath );
+                    test = ServiceStartupMode(sServiceName, out iRegKeyStart, out bRegKeyDelayedAutoStart, out bRegKeyWOW64, out strObjectName, out strFileOwner, out strImagePath, out strResolvedImagePath );
                     ServiceControllerStatus serviceStatus = scService.Status;
 
                     // Store the service to the list.
@@ -189,7 +189,7 @@ namespace check_services
             return "errorInServiceCategoryLookup";
         }
 
-        public static int ServiceStartupMode(string inventory_level, string service, out int iRegKeyStart, out bool bRegKeyDelayedAutoStart, out bool bRegKeyWOW64, out string strObjectName, out string strFileOwner, out string strImagePath, out string strResolvedImagePath)
+        public static int ServiceStartupMode(string service, out int iRegKeyStart, out bool bRegKeyDelayedAutoStart, out bool bRegKeyWOW64, out string strObjectName, out string strFileOwner, out string strImagePath, out string strResolvedImagePath)
         {
             string key;
 
@@ -205,7 +205,7 @@ namespace check_services
             key = "ObjectName";
             RegReadStringFromHKLMService(service, key, out strObjectName);
 
-            if (inventory_level == "full")
+            if (Settings.strInventoryLevel == "full")
             {
                 // Read WOW64 value
                 key = "WOW64";
@@ -611,7 +611,7 @@ namespace check_services
             }
         }
 
-        public static int OutputReadable(string inventory_level, bool do_all_running_only, bool do_hide_empty_vars)
+        public static int OutputReadable()
         {
             bool temp = true;
 
@@ -621,7 +621,7 @@ namespace check_services
                 return (int)ServiceState.ServiceUnknown;
 
             // Import all services
-            temp = Inventory.ServicesOnMachine(inventory_level, do_all_running_only, true);
+            temp = Inventory.ServicesOnMachine();
             if (temp == false)
                 return (int)ServiceState.ServiceUnknown;
 
@@ -629,7 +629,7 @@ namespace check_services
             foreach (var ActualService in listOverActualServices)
             {
                 var LocalService = ActualService.Value;
-                string readable = ReadableSerializer.Serialize(LocalService, do_hide_empty_vars);
+                string readable = ReadableSerializer.Serialize(LocalService, Settings.bDoHideEmptyVars);
                 Console.WriteLine("Service: " + LocalService.ServiceName + ":\n" + readable);
                 Console.WriteLine("");
             }
@@ -637,7 +637,7 @@ namespace check_services
             return (int)ServiceState.ServiceOK;
         }
 
-        public static int OutputCSV(string inventory_level, bool do_all_running_only)
+        public static int OutputCSV()
         {
             bool temp = true;
 
@@ -647,7 +647,7 @@ namespace check_services
                 return (int)ServiceState.ServiceUnknown;
 
             // Import all services
-            temp = Inventory.ServicesOnMachine(inventory_level, do_all_running_only, true);
+            temp = Inventory.ServicesOnMachine();
             if (temp == false)
                 return (int)ServiceState.ServiceUnknown;
 
@@ -666,7 +666,7 @@ namespace check_services
             return (int)ServiceState.ServiceOK;
         }
 
-        public static int OutputJSON(string inventory_level, bool do_all_running_only)
+        public static int OutputJSON()
         {
             bool temp = true;
 
@@ -676,7 +676,7 @@ namespace check_services
                 return (int)ServiceState.ServiceUnknown;
 
             // Import all services
-            temp = Inventory.ServicesOnMachine(inventory_level, do_all_running_only, true);
+            temp = Inventory.ServicesOnMachine();
             if (temp == false)
                 return (int)ServiceState.ServiceUnknown;
 
@@ -687,7 +687,7 @@ namespace check_services
             return (int)ServiceState.ServiceOK;
         }
 
-        public static int OutputI2Conf(string inventory_level, bool do_all_running_only, bool do_hide_empty_vars)
+        public static int OutputI2Conf()
         {
             bool temp = true;
 
@@ -697,7 +697,7 @@ namespace check_services
                 return (int)ServiceState.ServiceUnknown;
 
             // Import all services
-            temp = Inventory.ServicesOnMachine(inventory_level, do_all_running_only, true);
+            temp = Inventory.ServicesOnMachine();
             if (temp == false)
                 return (int)ServiceState.ServiceUnknown;
 
@@ -705,7 +705,7 @@ namespace check_services
             foreach (var ActualService in listOverActualServices)
             {
                 var LocalService = ActualService.Value;
-                string i2conf = IcingaSerializer.Serialize(LocalService, do_hide_empty_vars);
+                string i2conf = IcingaSerializer.Serialize(LocalService, Settings.bDoHideEmptyVars);
                 Console.WriteLine("vars.inv.windows.service[\"" + LocalService.ServiceName + "\"] = " + i2conf);
                 Console.WriteLine("");
             }

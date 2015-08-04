@@ -11,7 +11,7 @@ namespace check_services
         {
             int returncode = 0;
 
-            returncode = ConsoleHandler.ParseArgs(returncode, args);
+            returncode = ConsoleHandler.Parse(returncode, args);
 
             return (int)returncode;
         }
@@ -20,7 +20,7 @@ namespace check_services
         {
             CheckResult I2CheckResult = new CheckResult();
 
-            I2CheckResult = Icinga2Handler.ParseArgs(I2CheckResult, args);
+            I2CheckResult = Icinga2Handler.Parse(I2CheckResult, args);
 
             return I2CheckResult;
         }

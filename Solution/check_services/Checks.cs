@@ -16,7 +16,7 @@ namespace check_services
 
         private static bool errorServices = false;
 
-        public static int Services(string inventory_level, int returncode, bool do_all_running_only, bool do_all_starttypes, int delayed_grace_duration, bool do_hide_category_from_output, bool do_single_check, string expected_state)
+        public static int Services(int returncode)
         {
             bool temp;
             outputServices = "";
@@ -30,15 +30,15 @@ namespace check_services
             if (temp == false)
                 return (int)ServiceState.ServiceUnknown;
 
-            temp = Inventory.ServicesOnMachine(inventory_level, do_all_running_only, false);
+            temp = Inventory.ServicesOnMachine();
             if (temp == false)
                 return (int)ServiceState.ServiceUnknown;
 
             // Time since bootup
-            if (GetUpTime() < delayed_grace_duration)
+            if (GetUpTime() < Settings.iDelayedGraceDuration)
                 bDelayedGracePeriod = true;
 
-            if (do_hide_category_from_output == false && Settings.Categories.Length >= 2)
+            if (Settings.bDoHideCategoryFromOuput == false && Settings.Categories.Length >= 2)
                 bIncludeCategoryInOutput = true;
 
             // Find Services that we have that is in the definition.
@@ -54,10 +54,10 @@ namespace check_services
                 if (Settings.WarnCategories.Contains(ActualService.ServiceCategory))
                     bWarningForServiceCategory = true;
 
-                // Single check services should bypass do_all_starttypes check further down.
-                if (do_single_check == true)
+                // Single check services should bypass bDoCheckAllStartTypes check further down.
+                if (Settings.bDoSingleCheck == true)
                 {
-                    returncode = CheckExpectedService(returncode, ActualService, expected_state, bWarningForServiceCategory, bDelayedGracePeriod);
+                    returncode = CheckExpectedService(returncode, ActualService, bWarningForServiceCategory, bDelayedGracePeriod);
                     PerfData.ServiceStatusCounting(ActualService.CurrentStatus);
                     Program.listServicePerfCounters.Add(ActualService.ServiceName);
                     PerfData.iNumberOfServices++;
@@ -66,7 +66,7 @@ namespace check_services
                 }
 
                 // Skip past this service if we only check for services with Automatic StartMode regardless of anything else.
-                if (do_all_starttypes == false && ActualService.StartType != (string)ServiceStartMode.Automatic.ToString())
+                if (Settings.bDoCheckAllStartTypes == false && ActualService.StartType != (string)ServiceStartMode.Automatic.ToString())
                 {
                     if (Settings.bVerbose == true)
                         Console.WriteLine("Skipping, Service is not 'Automatic': " + ActualService.ServiceName);
@@ -155,22 +155,22 @@ namespace check_services
             return returncode;
         }
 
-        private static int CheckExpectedService(int returncode, WinServiceActual ActualService, string expected_state, bool bWarningForServiceCategory, bool bDelayedGracePeriod)
+        private static int CheckExpectedService(int returncode, WinServiceActual ActualService, bool bWarningForServiceCategory, bool bDelayedGracePeriod)
         {
-            if (ActualService.CurrentStatus == expected_state)
+            if (ActualService.CurrentStatus == Settings.strExpectedState)
             {
                 listServiceOutput.Add("Service '" + ActualService.ServiceName + "' (" + ActualService.DisplayName + ") is in the expected state '" + ActualService.CurrentStatus.ToString() + "'");
                 PerfData.iNumberOfCorrectServices++;
             }
             else if (ActualService.StartType == ServiceStartMode.Automatic.ToString() && ActualService.DelayedAutostart == true && bDelayedGracePeriod == true)
             {
-                listServiceOutput.Add("Service '" + ActualService.ServiceName + "' (" + ActualService.DisplayName + ") is not yet in the expected state of '" + ActualService.CurrentStatus.ToString() + "', it is currently in '" + expected_state + "', it is within its grace period to start.");
+                listServiceOutput.Add("Service '" + ActualService.ServiceName + "' (" + ActualService.DisplayName + ") is not yet in the expected state of '" + ActualService.CurrentStatus.ToString() + "', it is currently in '" + Settings.strExpectedState + "', it is within its grace period to start.");
                 PerfData.iNumberOfPendingServices++;
             }
             else if (bWarningForServiceCategory == true)
             {
                 outputServices = outputServices + "Service '" + ActualService.ServiceName + "' is in the wrong state '" + ActualService.CurrentStatus.ToString() + "' ";
-                listServiceOutput.Add("Service '" + ActualService.ServiceName + "' (" + ActualService.DisplayName + ") is not in the expected state '" + expected_state + "'");
+                listServiceOutput.Add("Service '" + ActualService.ServiceName + "' (" + ActualService.DisplayName + ") is not in the expected state '" + Settings.strExpectedState + "'");
                 returncode = (int)ServiceState.ServiceWarning;
                 PerfData.iNumberOfWrongServices++;
                 errorServices = true;
@@ -178,7 +178,7 @@ namespace check_services
             else
             {
                 outputServices = outputServices + "Service '" + ActualService.ServiceName + "' is in the wrong state '" + ActualService.CurrentStatus.ToString() + "' ";
-                listServiceOutput.Add("Service '" + ActualService.ServiceName + "' (" + ActualService.DisplayName + ") is not in the expected state '" + expected_state + "'");
+                listServiceOutput.Add("Service '" + ActualService.ServiceName + "' (" + ActualService.DisplayName + ") is not in the expected state '" + Settings.strExpectedState + "'");
                 returncode = (int)ServiceState.ServiceCritical;
                 PerfData.iNumberOfWrongServices++;
                 errorServices = true;
