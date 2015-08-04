@@ -47,7 +47,7 @@ namespace check_services
             }
 
             returncode = HandleConsoleText(returncode);
-            return 3;
+            return returncode;
         }
 
         public static int HandleConsoleText(int returncode)

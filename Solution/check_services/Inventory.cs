@@ -44,12 +44,14 @@ namespace check_services
                 {
                     string sServiceName = scService.ServiceName.ToString();
                     string sDisplayName = scService.DisplayName.ToString();
+                    bool bMatchedService = false;
 
                     // Skip service for inventory if we only scare about running services in the inventory output.
                     if (Settings.bDoInvAllRunningOnly == true && Settings.bDoInventory == true && scService.Status.ToString() != ServiceControllerStatus.Running.ToString())
                     {
                         if (Settings.bVerbose == true)
                             Console.WriteLine("INFO: Service is not running, skipping: " + sServiceName);
+
                         continue;
                     }
 
@@ -67,22 +69,27 @@ namespace check_services
                     {
                         if (Settings.bDebug == true)
                             Console.WriteLine("DEBUG: Included service: " + sServiceName);
+
+                        bMatchedService = true;
                     }
                     else if (!Settings.IncludedServices.Contains(sServiceName) && Settings.bDefaultIncludeList == false)
                     {
                         if (Settings.bDebug == true)
                             Console.WriteLine("INFO: Service not in Settings.IncludedServices: " + sServiceName);
+
                         continue;
                     }
                     else if (Settings.IncludedServices.Contains(sServiceName) && Settings.bDefaultIncludeList == false)
                     {
                         if (Settings.bVerbose == true)
                             Console.WriteLine("INFO: Included service: " + sServiceName);
+
+                        bMatchedService = true;
                     }
 
                     strCategory = ServiceCategoryLookup(sServiceName);
 
-                    // Match if the returned category matches the service, if it does not then skip
+                    // Match if the returned category matches the service, if it does not then skip if its not already included
                     if (Settings.Categories.Contains(strCategory))
                     {
                         if (Settings.bVerbose)
@@ -90,10 +97,17 @@ namespace check_services
                             Console.WriteLine("DEBUG: Service '" + sServiceName + "'matching category '" + strCategory + "'");
                         }
                     }
-                    else if (Settings.bDefaultCategoriesList == false)
+                    else if (Settings.bDefaultCategoriesList == false && Settings.bDoSingleCheck == false)
                     {
                         if (Settings.bVerbose)
                             Console.WriteLine("INFO: Skipping service due to category not matched: " + sServiceName);
+                        continue;
+                    }
+                    else if (bMatchedService == false)
+                    {
+                        if (Settings.bVerbose)
+                            Console.WriteLine("INFO: Skipping service '" + sServiceName + "' due to not included via Category or IncludedServices");
+
                         continue;
                     }
                     

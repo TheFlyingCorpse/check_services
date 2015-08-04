@@ -29,13 +29,13 @@ namespace check_services
             {
                 { "i|inventory", "Provide the inventory",
                     v => { Settings.bDoInventory = (v != null); } },
-                { "c|check-services", "Check the health status of the local services",
+                { "c|check-service", "Check the health status of the local services",
                     v => { Settings.bDoCheckServices = (v != null); } },
-                { "category=", "Category to check, default is ThirdParty",
+                { "category=", "Category to check or provide inventory from, default is ThirdParty",
                     v => temp_categories.Add (v)},
                 { "excluded-svc=", "Exclude this service",
                     v => temp_excluded_services.Add (v)},
-                { "included-svc=", "Excplicity include this service",
+                { "included-svc=", "Explicitly include this service",
                     v => temp_included_services.Add (v)},
                 { "stopped-svc=", "This service should be stopped",
                     v => temp_stopped_services.Add (v)},
@@ -51,17 +51,17 @@ namespace check_services
                     v => { Settings.bDoInvAllRunningOnly = (v != null); } },
                 { "inv-hide-empty", "Hide empty vars from inventory output.",
                     v => { Settings.bDoHideEmptyVars = (v != null); } },
-                { "single-check", "Specifies that only one Service is to be checked, simplifies output of perfdata and perfcounters",
+                { "single-service", "Specifies that only one Service is to be checked, simplifies output of perfdata and optional perfcounters",
                     v => { Settings.bDoSingleCheck = (v != null); } },
-                { "expected-state=", "Set the expected state for the service, used primarly with --single-service option",
+                { "expected-state=", "Set the expected state for the service, used primarily with --single-service option",
                     v => Settings.strExpectedState = v },
-                { "split-by=", "Alternative character to split input options VALUES with",
+                { "split-by=", "Alternative character to split input options VALUE with. Default is ','",
                     v => Settings.strSplitBy = v },
                 { "check-all-starttypes", "Check all StartTypes against specified Category, not only Automatic",
                     v => { Settings.bDoCheckAllStartTypes = (v != null); } },
                 { "perfcounter", "Extra performance counters, use with caution",
                     v => { Settings.bVerbose = (v != null); } },
-                { "delayed-grace=", "Set gracetime for Automatic (Delayed) services after bootup before they must be started",
+                { "delayed-grace=", "Set grace time for Automatic (Delayed) services after boot-up before they must be started",
                     (int v) => Settings.iDelayedGraceDuration = v },
                 { "hide-long-output", "Hide verbose output from the --check-service command, simple output",
                     v => { Settings.bDoHideLongOutput = (v != null); } },
@@ -77,7 +77,7 @@ namespace check_services
                     v => temp_services_in_thirdparty_category.Add (v)},
                 { "svc-in-sup-category=", "Set category of specified service to Supporting",
                     v => temp_services_in_supporting_category.Add (v)},
-                { "svc-in-ign-category=", "Set category of specified service to Ingored",
+                { "svc-in-ign-category=", "Set category of specified service to Ignored",
                     v => temp_services_in_ignored_category.Add (v)},
                 { "category-file=", "Path to a file which contains an alternative list of Service to Category definitions",
                     v => Settings.strCategoryFilePath = v },
@@ -170,6 +170,7 @@ namespace check_services
 
                 Settings.Categories = SplitList(temp_categories);
                 PrintArray("Categories", Settings.Categories);
+                Settings.bDefaultCategoriesList = false;
             }
             if (temp_warn_categories.Count > 0)
             {
