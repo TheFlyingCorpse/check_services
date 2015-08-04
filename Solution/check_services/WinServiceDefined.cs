@@ -1,8 +1,8 @@
 ﻿using System;
 
 namespace check_services
-{ 
-    class WinServiceDefined
+{
+    internal class WinServiceDefined
     {
         public String ServiceName { get; private set; }
         public String DisplayNamea { get; private set; }

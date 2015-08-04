@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Reflection;
 
-class IcingaSerializer
+internal class IcingaSerializer
 {
     public static string Serialize(object o, bool bSkipEmpty = false, int indent = 0)
     {

@@ -1,14 +1,13 @@
-﻿using System;
+﻿using Icinga;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using Icinga;
-using System.ServiceProcess;
 using System.Diagnostics;
-using System.Text;
+using System.Linq;
+using System.ServiceProcess;
 
 namespace check_services
 {
-    class Check
+    internal class Checks
     {
         public static List<string> listPerfData = new List<string>();
         public static List<string> listServiceOutput = new List<string>();
@@ -39,7 +38,7 @@ namespace check_services
             if (GetUpTime() < delayed_grace_duration)
                 bDelayedGracePeriod = true;
 
-            if (do_hide_category_from_output == false && Settings.categories.Length >= 2)
+            if (do_hide_category_from_output == false && Settings.Categories.Length >= 2)
                 bIncludeCategoryInOutput = true;
 
             // Find Services that we have that is in the definition.
@@ -52,9 +51,7 @@ namespace check_services
 
                 WinServiceActual ActualService = Actualservices.Value;
 
-
-
-                if (Settings.warn_categories.Contains(ActualService.ServiceCategory))
+                if (Settings.WarnCategories.Contains(ActualService.ServiceCategory))
                     bWarningForServiceCategory = true;
 
                 // Single check services should bypass do_all_starttypes check further down.
@@ -117,7 +114,7 @@ namespace check_services
                 }
 
                 // If match for the Category and it is a service that starts Automatically.
-                if (Settings.categories.Contains(ActualService.ServiceCategory) && ActualService.StartType == ServiceStartMode.Automatic.ToString() && bMatchedService == false)
+                if (Settings.Categories.Contains(ActualService.ServiceCategory) && ActualService.StartType == ServiceStartMode.Automatic.ToString() && bMatchedService == false)
                 {
                     returncode = CheckCategories(returncode, ActualService, bDelayedGracePeriod, bIncludeCategoryInOutput, bWarningForServiceCategory);
                     PerfData.ServiceStatusCounting(ActualService.CurrentStatus);

@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace check_services
 {
-    class WinServiceActual
+    internal class WinServiceActual
     {
         public String ServiceName { get; private set; }
         public String DisplayName { get; private set; }

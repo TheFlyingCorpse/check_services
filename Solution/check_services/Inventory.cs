@@ -1,19 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Icinga;
 using Microsoft.VisualBasic.FileIO;
-using System.Data;
-using System.ServiceProcess;
 using Microsoft.Win32;
-using Icinga;
-using System.IO;
-using System.Security.Principal;
-using System.Linq;
 using Newtonsoft.Json;
-using System.Text;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.IO;
+using System.Linq;
+using System.Security.Principal;
+using System.ServiceProcess;
 
 namespace check_services
 {
-    class Inventory
+    internal class Inventory
     {
         private enum StartType : int
         {
@@ -37,7 +36,6 @@ namespace check_services
         private static string strFileOwner = "";
         private static string strImagePath = "";
         private static string strResolvedImagePath = "";
-
 
         public static bool ServicesOnMachine(string inventory_level, bool do_all_running_only, bool do_inventory)
         {
@@ -96,14 +94,14 @@ namespace check_services
                     strCategory = ServiceCategoryLookup(sServiceName);
 
                     // Match if the returned category matches the service, if it does not then skip
-                    if (Settings.categories.Contains(strCategory))
+                    if (Settings.Categories.Contains(strCategory))
                     {
                         if (Settings.bDebug)
                         {
                             Console.WriteLine("DEBUG: Service matching category");
                         }
                     }
-                    else if (!Settings.categories.Contains(strCategory) && Settings.bDefaultCategoriesList == false)
+                    else if (!Settings.Categories.Contains(strCategory) && Settings.bDefaultCategoriesList == false)
                     {
                         if (Settings.bVerbose)
                             Console.WriteLine("INFO: Skipping service due to category not matched: " + sServiceName);
@@ -759,7 +757,6 @@ namespace check_services
             }
             return csvData;
         }
-
 
         public static string CleanStatus(string status)
         {

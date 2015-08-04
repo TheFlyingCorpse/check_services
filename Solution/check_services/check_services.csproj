@@ -84,8 +84,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Check.cs" />
+    <Compile Include="Checks.cs" />
+    <Compile Include="ConsoleHandler.cs" />
+    <Compile Include="Handler.cs" />
     <Compile Include="icinga2clr.cs" />
+    <Compile Include="Icinga2Handler.cs" />
     <Compile Include="IcingaSerializer.cs" />
     <Compile Include="Inventory.cs" />
     <Compile Include="Mono.Options\Options.cs" />
