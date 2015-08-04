@@ -19,39 +19,63 @@ This executable assumes the following:
 
 ## Usage:
 
-	check_services.exe - Windows Service Status plugin for Icinga2, Icinga, Centreon, Shinken, Naemon and other nagios like systems.
-        Version: 0.9.5689.39435
-
-        A:inventory                     Switch to use to provide inventory instead of checking for the health.
-        B:check-service                 Switch to use to check the health status of the local services
-        C:categories                    Argument, which categories to check, valid options are: Basic(includes the 4 next categories), System, Essential, Role, Supporting, ThirdParty(default), Ignored(not included in all).
-        E:inv-level                     Argument to change the level of output. Default is 'normal', available options are 'normal','full'
-        f:inv-format                    Argument to provide output of the inventory in other formats, valid options are 'readable', 'csv', 'i2conf' and 'json'
-        H:excluded-services             Argument, excludes services from checks and inventory. Provide multiple with spaces between
-        i:included-services             Argument, includes services to check while all other services are excluded, affects both checks and inventory. Provide multiple with spaces between
-        I:stopped-services              Argument, these services are checked that they are stopped. Provide multiple with spaces between
-        j:running-services              Argument, these services are checked that they are started. Provide multiple with spaces between
-        J:svc-in-sys-category           Argument to set one or more services to the be included in the System category for both check and inventory.
-        k:svc-in-ess-category           Argument to set one or more services to the be included in the Essential category for both check and inventory
-        K:svc-in-role-category          Argument to set one or more services to the be included in the Role category for both check and inventory
-        l:svc-in-sup-category           Argument to set one or more services to the be included in the Supporting category for both check and inventory
-        L:svc-in-3rd-category           Argument to set one or more services to the be included in the ThirdParty category for both check and inventory
-        m:svc-in-ign-category           Argument to set one or more services to the be included in the Ignored category for both check and inventory
-        M:inv-all-running               Switch to list for inventory all Services running in the Categories, not only 'Automatic' services.
-        n:check-all-starttypes          Switch to check all Services in the Categories, not only 'Automatic' services.
-        s:delayed-grace                 Argument to provide a grace time for 'Automatic (Delayed Start)' services after bootup to start within. Default value is '60' (s).
-        u:hide-normal-output            Switch to hide category from output, this only applies when there is two or more categories being checked
-        U:hide-category                 Switch to hide category from output, this only applies when there is two or more categories being checked
-        v:expected-state                Argument used in the Icinga2 AutoApply rules, sets the expected state of the service, used with --expected-state.
-        V:warn-on-category              Argument to return warning instead of critical on these ServiceCategories. Default is 'Supporting'.
-        w:icinga2                       Used in the Icinga2 CommandDefinition, returns output and perfdata to the correct class. Do not use via command line.
-        W:single-check                  Switch used in the Icinga2 AutoApply rules, assumes only one service is being checked, specified via --included-services
-        x:split-by                      Argument used to specify what splits all Service and Category arguments. Default is a single space, ' '.
-        X:inv-hide-empty                Switch to hide empty vars from inventory output.
-        y:file-format                   Argument to specify format of the file path given in category-file, assumes CSV if nothing else is specified
-        Y:category-file                 Argument to provide for both inventory and checks a category file that provides categories for the returned inventory or the categories switch to exclude everything not in those categories.
-        z:verbose                       Switch to use when trying to figure out why a service is not included, excluded or similarly when the returned output is not as expected
-        Z:debug                         Switch to to get maximum verbosity (for debugging)
+	Usage: check_services.exe [OPTIONS]
+	Version: 0.10.5694.30022
+	This plugin checks the State of one or more services on the local machine.
+	You can filter for your services by using category or a combination of category and include/exclude filters.
+	Use the same switch multiple times if you want to combine or exclude multiple categories or services
+	
+	Options:
+	  -i, --inventory            Provide the inventory
+	  -c, --check-services       Check the health status of the local services
+		  --category=VALUE       Category to check or provide inventory from,
+								   default is ThirdParty
+		  --excluded-svc=VALUE   Exclude this service
+		  --included-svc=VALUE   Explicitly include this service
+		  --stopped-svc=VALUE    This service should be stopped
+		  --running-svc=VALUE    Override CSV, this service should be running
+		  --warn-on-category=VALUE
+								 Warn on the specified category. Default is
+								   Supporting
+		  --inv-format=VALUE     Inventory output format, default is readable,
+								   available are csv,readable,i2conf
+		  --inv-level=VALUE      Inventory level, normal or full
+		  --inv-all-running      Inventory only the running services
+		  --inv-hide-empty       Hide empty vars from inventory output.
+		  --single-check         Specifies that only one Service is to be checked,
+								   simplifies output of perfdata and perfcounters
+		  --expected-state=VALUE Set the expected state for the service, used
+								   primarily with --single-service option
+		  --split-by=VALUE       Alternative character to split input options
+								   VALUE with
+		  --check-all-starttypes Check all StartTypes against specified Category,
+								   not only Automatic
+		  --perfcounter          Extra performance counters, use with caution
+		  --delayed-grace=VALUE  Set grace time for Automatic (Delayed) services
+								   after boot-up before they must be started
+		  --hide-long-output     Hide verbose output from the --check-service
+								   command, simple output
+		  --hide-category        Hide category from the normal output from the --
+								   check-service command
+		  --svc-in-sys-category=VALUE
+								 Set category of specified service to System
+		  --svc-in-ess-category=VALUE
+								 Set category of specified service to Essential
+		  --svc-in-role-category=VALUE
+								 Set category of specified service to Role
+		  --svc-in-3rd-category=VALUE
+								 Set category of specified service to ThirdParty
+		  --svc-in-sup-category=VALUE
+								 Set category of specified service to Supporting
+		  --svc-in-ign-category=VALUE
+								 Set category of specified service to Ignored
+		  --category-file=VALUE  Path to a file which contains an alternative list
+								   of Service to Category definitions
+		  --file-format=VALUE    Specify format of the file path given in category-
+								   file, default CSV
+	  -v, --verbose              Verbose output
+	  -d, --debug                Debug output
+	  -h, --help                 Show this help
 
 ## QuickStart - Icinga2
 
@@ -73,7 +97,7 @@ To make available the plugin for icinga2:
 
 Copy the output from this command to hosts.conf inside the brackets of the Host object (must be run from within icinga2's sbin folder, where you copied check_services.exe and check_services.exe.config)
 
-	check_services.exe --inventory --categories ThirdParty --inv-format i2conf
+	check_services.exe --inventory --category ThirdParty --inv-format i2conf
 
 #### Monitoring inventoried Services
 
@@ -111,47 +135,47 @@ Wait 1-2 minutes, then on the master, run "icinga2 node update-config" before re
 ### Monitoring
 Monitor System Services
 
-	check_services.exe --check-service --categories System
+	check_services.exe --check-service --category System
 
 Monitor System, Essential and Role Services
 
-	check_services.exe --check-service --categories System Role Essential
+	check_services.exe --check-service --category System Role Essential
 
 Monitor Essential Services, exclude service gpsvc (Group Policy Client)
 
-	check_services.exe --check-service --categories Essential --excluded-services gpsvc
+	check_services.exe --check-service --category Essential --excluded-svc gpsvc
 
 Monitor only specified services
 
-	check_services.exe --check-service --included-services SNMP Spooler "Apple Mobile Device Service"
+	check_services.exe --check-service --included-svc SNMP --included-svc Spooler --included-svc "Apple Mobile Device Service"
 
 Monitor all services in the category, even those not set to Automatic
 
-	check_services.exe --check-service --categories Supporting --check-all-starttypes
+	check_services.exe --check-service --category Supporting --check-all-starttypes
 
 Monitor categories System, Essential and ThirdParty, hide categories from output when there are multiple categories specified as a parameter
 
-	check_services.exe --check-service --categories System Essential ThirdParty --hide-category
+	check_services.exe --check-service --category System --category Essential --category ThirdParty --hide-category
 	
 Monitor categories System, Essential and Supporting, warn if it is incorrect in Essential and Supporting
 
-	check_services.exe --check-service --categories System Essential Supporting --warn-on-category Essential Supporting
+	check_services.exe --check-service --category System --category Essential --category Supporting --warn-on-category Essential --warn-on-category Supporting
 	
 Monitor with categories from CSV file:
 
-	check_services.exe --check-service --categories System Essential ThirdParty --category-file "C:\temp\ServiceDefinitions.csv" --file-format CSV
+	check_services.exe --check-service --category System Essential ThirdParty --category-file "C:\temp\ServiceDefinitions.csv" --file-format CSV
 
 Monitor category ThirdParty with 180 second gracetime for Services that are of type Automatic (Delayed) to be started after bootup
 
-	check_services.exe --check-service --categories ThirdParty --delayed-grace 180
+	check_services.exe --check-service --category ThirdParty --delayed-grace 180
 
 Monitor single service with expected state set
 
-	check_services.exe --check-service --single-check --expected-state "Running" --included-services "RpcSs"
+	check_services.exe --check-service --single-service --expected-state "Running" --included-svc "RpcSs"
 	
 Monitor categories System, Essential, Supporting and Role, set service CcmExec to category Supporting
 
-	check_services.exe --check-service --categories System Essential Supporting Role --svc-in-sup-category CcmExec
+	check_services.exe --check-service --category System --category Essential --category Supporting --category Role --svc-in-sup-category CcmExec
 	
 
 
@@ -174,11 +198,11 @@ Inventory Services, output as CSV
 
 Inventory Services, only return Categories of type ThirdParty
 
-	check_services.exe --inventory --categories ThirdParty
+	check_services.exe --inventory --category ThirdParty
 
 Inventory Services, exclude service name of workfoldersvc, WwanSvc and Apple Mobile Device Service
 
-	check_services.exe --inventory --excluded-services workfoldersvc WwanSvc "Apple Mobile Device Service"
+	check_services.exe --inventory --excluded-svc workfoldersvc --excluded-svc WwanSvc --excluded-svc "Apple Mobile Device Service"
 
 Inventory Services, show services all currently running.
 
@@ -202,118 +226,118 @@ ToDo
 		arguments = {
 			"--inventory" = {
 				set_if = "$svc_inventory$"	
-				description = "Switch to use to provide inventory instead of checking for the health."
+				description = "Provide the inventory"
 			}
 			"--check-service" = {
 				set_if = "$svc_check$"
-				description = "Switch to use to check the health status of the local services"
+				description = "Check the health status of the local services"
 			}
-			"--categories" = {
-				value = "$svc_categories$"
-				description = "Argument, which categories to check, valid options are: Basic(includes the 4 next categories), System, Essential, Role, Supporting, ThirdParty(default), Ignored(not included in all)."
+			"--category" = {
+				value = "$svc_category$"
+				description = "Category to check or provide inventory from, default is ThirdParty"
 			}
-			"--inv-level" = {
-				value = "$svc_inventory_level$"
-				description = "Argument to change the level of output. Default is 'normal', available options are 'normal','full'"
+			"--excluded-svc" = {
+				value = "$svc_excluded_svc$"
+				description = "Exclude this service"
 			}
-			"--inv-format" = {
-				value = "$svc_inventory_format$"
-				description = "Argument to provide output of the inventory in other formats, valid options are 'readable', 'csv', 'i2conf' and 'json'"
-			}
-			"--excluded-services" = {
-				value = "$svc_excluded_services$"
-				description = "Argument, excludes services from checks and inventory. Provide multiple with spaces between"
-			}
-			"--included-services" = {
-				value = "$svc_included_services$"
-				description = "Argument, includes services to check while all other services are excluded, affects both checks and inventory. Provide multiple with spaces between"
+			"--included-svc" = {
+				value = "$svc_included_svc$"
+				description = "Explicitly include this service"
 			}
 			"--stopped-services" = {
-				value = "$svc_stopped_services$"
-				description = "Argument, these services are checked that they are stopped. Provide multiple with spaces between"
+				value = "$svc_stopped_svc$"
+				description = "This service should be stopped"
 			}
 			"--running-services" = {
-				value = "$svc_running_services$"
-				description = "Argument, these services are checked that they are started. Provide multiple with spaces between"
-			}
-			"--svc-in-sys-category" = {
-				value = "$svc_in_sys_category$"
-				description = "Argument to set one or more services to the be included in the System category for both check and inventory."
-			}
-			"--svc-in-ess-category" = {
-				value = "$svc_in_ess_category$"
-				description = "Argument to set one or more services to the be included in the Essential category for both check and inventory."
-			}
-			"--svc-in-role-category" = {
-				value = "$svc_in_role_category$"
-				description = "Argument to set one or more services to the be included in the Role category for both check and inventory."
-			}
-			"--svc-in-sup-category" = {
-				value = "$svc_in_sup_category$"
-				description = "Argument to set one or more services to the be included in the Supporting category for both check and inventory."
-			}
-			"--svc-in-3rd-category" = {
-				value = "$svc_in_3rd_category$"
-				description = "Argument to set one or more services to the be included in the ThirdParty category for both check and inventory."
-			}
-			"--svc-in-ign-category" = {
-				value = "$svc_in_ign_category$"
-				description = "Argument to set one or more services to the be included in the Ignored category for both check and inventory."
-			}
-			"--inv-all-running" = {
-				set_if = "$svc_inv_all_running$"	
-				description = "Switch to list for inventory all Services running in the Categories, not only 'Automatic' services."
-			}
-			"--check-all-starttypes" = {
-				set_if = "$svc_check_all_starttypes$"	
-				description = "Switch to check all Services in the Categories, not only 'Automatic' services."
-			}
-			"--delayed-grace" = {
-				value = "$svc_delayed_grace$"
-				description = "Argument to provide a grace time for 'Automatic (Delayed Start)' services after bootup to start within. Default value is '60' (s)."
+				value = "$svc_running_svc$"
+				description = "Override CSV, this service should be running"
 			}
 			"--warn-on-category" = {
 				value = "$svc_warn_on_category$"
-				description = "Argument to return warning instead of critical on these ServiceCategories. Default is 'Supporting'."
+				description = "Warn on the specified category. Default is Supporting."
 			}
-			"--expected-state" = {
-				set_if = "$svc_single_check$"	
-				value = "$svc_expected_state$"
-				description = "Argument used in the Icinga2 AutoApply rules, sets the expected state of the service, used with --expected-state."
+			"--inv-format" = {
+				value = "$svc_inventory_format$"
+				description = "Inventory output format, default is readable, available are csv,readable,i2conf"
 			}
-			"--hide-long-output" = {
-				set_if = "$svc_hide_long_output$"	
-				description = "Switch to hide the long service output, only prints the summary output and any services deviating from 'OK'"
+			"--inv-level" = {
+				value = "$svc_inventory_level$"
+				description = "Inventory level, normal or ful"
 			}
-			"--hide-category" = {
-				set_if = "$svc_hide_category$"	
-				description = "Switch to hide category from output, this only applies when there is two or more categories being checked"
-			}
-			"--icinga2" = {
-				set_if = "$svc_icinga2$"	
-				description = "Used in the Icinga2 CommandDefinition, returns output and perfdata to the correct class. Do not use via command line."
-			}
-			"--single-check" = {
-				set_if = "$svc_single_check$"	
-				description = "Switch used in the Icinga2 AutoApply rules, assumes only one service is being checked, specified via --included-services"
-			}
-			"--split-by" = {
-				value = "$svc_split_by$"
-				description = "Argument used to specify what splits all Service and Category arguments. Default is a single space, ' '."
+			"--inv-all-running" = {
+				set_if = "$svc_inv_all_running$"	
+				description = "Inventory only the running services"
 			}
 			"--inv-hide-empty" = {
 				set_if = "$svc_inv_hide_empty_vars$"	
-				description = "Switch to hide empty vars from inventory output."
+				description = "Hide empty vars from inventory output."
+			}
+			"--single-service" = {
+				set_if = "$svc_single_service$"	
+				description = "Specifies that only one Service is to be checked, simplifies output of perfdata and optional perfcounters"
+			}
+			"--expected-state" = {
+				set_if = "$svc_single_service$"	
+				value = "$svc_expected_state$"
+				description = "Set the expected state for the service, used primarily with --single-service option"
+			}
+			"--split-by" = {
+				value = "$svc_split_by$"
+				description = "Alternative character to split input options VALUE with. Default is ','."
+			}
+			"--check-all-starttypes" = {
+				set_if = "$svc_check_all_starttypes$"	
+				description = "Check all StartTypes against specified Category, not only 'Automatic'"
+			}
+			"--perfcounter" = {
+				set_if = "$svc_perfcounter$"	
+				description = "Extra performance counters, use with caution"
+			}
+			"--delayed-grace" = {
+				value = "$svc_delayed_grace$"
+				description = "Set grace time for Automatic (Delayed) services after boot-up before they must be started, default is 60 s"
+			}
+			"--hide-long-output" = {
+				set_if = "$svc_hide_long_output$"	
+				description = "Hide verbose output from the --check-service command, simple output"
+			}
+			"--hide-category" = {
+				set_if = "$svc_hide_category$"	
+				description = "Hide category from the normal output from the --check-service command"
+			}
+			"--svc-in-sys-category" = {
+				value = "$svc_in_sys_category$"
+				description = "Set category of specified service to System"
+			}
+			"--svc-in-ess-category" = {
+				value = "$svc_in_ess_category$"
+				description = "Set category of specified service to Essential"
+			}
+			"--svc-in-role-category" = {
+				value = "$svc_in_role_category$"
+				description = "Set category of specified service to Role"
+			}
+			"--svc-in-3rd-category" = {
+				value = "$svc_in_3rd_category$"
+				description = "Set category of specified service to ThirdParty"
+			}
+			"--svc-in-sup-category" = {
+				value = "$svc_in_sup_category$"
+				description = "Set category of specified service to Supporting"
+			}
+			"--svc-in-ign-category" = {
+				value = "$svc_in_ign_category$"
+				description = "Set category of specified service to Ignored"
 			}
 			"--file-format" = {
-                                set_if = "$svc_override_file$"
+				set_if = "$svc_override_file$"
 				value = "$svc_file_format$"
 				description = "Argument to specify format of the file path given in category-file, assumes CSV if nothing else is specified"
 			}
 			"--category-file" = {
-                                set_if = "$svc_override_file$"
+				set_if = "$svc_override_file$"
 				value = "$svc_category_file$"
-				description = "Argument to provide for both inventory and checks a category file that provides categories for the returned inventory or the categories switch to exclude everything not in those categories."
+				description = "Path to a file which contains an alternative list of Service to Category definitions"
 			}
 			"--verbose" = {
 				set_if = "$svc_verbose$"
@@ -321,32 +345,32 @@ ToDo
 			}
 			
 		}
-		//vars.svc_check = false
 		//vars.svc_inventory = false
-		//vars.svc_categories = "ThirdParty"
+		//vars.svc_check = false
+		//vars.svc_excluded_svc = ""
+		//vars.svc_included_svc = ""
+		//vars.svc_stopped_svc = ""
+		//vars.svc_running_svc = ""
+		//vars.svc_warn_on_category = "Supporting"
+		//vars.svc_category = "ThirdParty"
 		//vars.svc_inventory_level = "normal"
 		//vars.svc_inventory_format = "i2conf"
-		//vars.svc_excluded_services = ""
-		//vars.svc_included_services = ""
-		//vars.svc_stopped_services = ""
-		//vars.svc_running_services = ""
+		//vars.svc_inv_all_running = false
+		//vars.svc_inv_hide_empty_vars = false
+		//vars.svc_single_service = false
+		//vars.svc_expected_state = "Running"
+		//vars.svc_split_by = ","
+		//vars.svc_check_all_starttypes = false
+		//vars.svc_perfcounter = false
+		//vars.svc_delayed_grace = "60"
+		//vars.svc_hide_long_output = false
+		//vars.svc_hide_category = false
 		//vars.svc_in_sys_category = ""
 		//vars.svc_in_ess_category = ""
 		//vars.svc_in_role_category = ""
 		//vars.svc_in_sup_category = ""
 		//vars.svc_in_3rd_category = ""
 		//vars.svc_in_ign_category = ""
-		//vars.svc_inv_all_running = false
-		//vars.svc_check_all_starttypes = false
-		//vars.svc_delayed_grace = "60"
-		//vars.svc_warn_on_category = "Supporting"
-		//vars.svc_expected_state = "Running"
-		//vars.svc_hide_long_output = false
-		//vars.svc_hide_category = false
-		//vars.svc_icinga2 = false
-		//vars.svc_single_check = false
-		//vars.svc_split_by = " "
-		//vars.svc_inv_hide_empty_vars = false
 		//vars.svc_override_file = false
 		//vars.svc_file_format = "CSV"
 		//vars.svc_category_file = ""
@@ -364,9 +388,9 @@ Monitor all services that are on the host in the inventory
 
 	  vars += config
 	  vars.svc_check = true
-	  vars.svc_included_services = vars.ServiceName
+	  vars.svc_included_svc = [ vars.ServiceName ]
 	  vars.svc_expected_state = vars.CurrentStatus
-	  vars.svc_single_check = true
+	  vars.svc_single_service = true
 	}
 
 Monitor all services in the System category
@@ -377,7 +401,7 @@ Monitor all services in the System category
 		check_command = "check_services"
 		
 		vars.svc_check = true
-		vars.svc_categories = "System"
+		vars.svc_categories = [ "System" ]
 		assign where host.name == NodeName
 	}
 
@@ -389,8 +413,8 @@ Monitor all services in the ThirdParty category, excluding gupdate
 		check_command = "check_services"
 		
 		vars.svc_check = true
-		vars.svc_categories = "ThirdParty"
-		vars.svc_excluded_services = "gupdate"
+		vars.svc_categories = [ "ThirdParty" ]
+		vars.svc_excluded_services = [ "gupdate" ]
 		assign where host.name == NodeName
 	}
 
@@ -402,7 +426,7 @@ Monitor all services in the System, Essential, Role and Supporting category by s
 		check_command = "check_services"
 		
 		vars.svc_check = true
-		vars.svc_categories = "Basic"
+		vars.svc_categories = [ "Basic" ]
 		vars.svc_hide_long_output = true
 		assign where host.name == NodeName
 	}
@@ -415,8 +439,7 @@ Monitor all services in the System, Essential and Role categories, hide long out
 		check_command = "check_services"
 		
 		vars.svc_check = true
-		vars.svc_categories = "System,Essential,Role"
-		vars.svc_split_by = ","
+		vars.svc_category = [ "System", "Essential" ,"Role" ]
 		vars.svc_hide_long_output = true
 		assign where host.name == NodeName
 	}

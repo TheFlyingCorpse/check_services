@@ -110,7 +110,7 @@ namespace check_services
 
                         continue;
                     }
-                    
+
                     List<string> listDependentServices = new List<string>();
                     List<string> listServicesDependedOn = new List<string>();
 
@@ -151,7 +151,7 @@ namespace check_services
                     string strImagePath = "";
                     string strResolvedImagePath = "";
 
-                    test = ServiceStartupMode(sServiceName, out iRegKeyStart, out bRegKeyDelayedAutoStart, out bRegKeyWOW64, out strObjectName, out strFileOwner, out strImagePath, out strResolvedImagePath );
+                    test = ServiceStartupMode(sServiceName, out iRegKeyStart, out bRegKeyDelayedAutoStart, out bRegKeyWOW64, out strObjectName, out strFileOwner, out strImagePath, out strResolvedImagePath);
                     ServiceControllerStatus serviceStatus = scService.Status;
 
                     // Store the service to the list.
@@ -309,7 +309,6 @@ namespace check_services
                     Console.WriteLine("DEBUG: Did not read " + key + " from Registry, it is likely missing, returning value of '" + value + "', this is normal.");
                 if (Settings.bDebug && Settings.bVerbose)
                     Console.WriteLine("DEBUG: Stacktrace: " + e);
-
             }
             return value;
         }

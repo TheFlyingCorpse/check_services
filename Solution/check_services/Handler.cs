@@ -121,8 +121,8 @@ namespace check_services
                 temp_services_in_essential_category, temp_services_in_role_category, temp_services_in_supporting_category, temp_services_in_thirdparty_category, temp_services_in_ignored_category);
 
             return returncode;
-
         }
+
         public static int HandleArguments(int returncode, List<string> temp_excluded_services, List<string> temp_included_services, List<string> temp_stopped_services, List<string> temp_running_services,
             List<string> temp_categories, List<string> temp_warn_categories, List<string> temp_services_in_system_category, List<string> temp_services_in_essential_category,
             List<string> temp_services_in_role_category, List<string> temp_services_in_supporting_category, List<string> temp_services_in_thirdparty_category, List<string> temp_services_in_ignored_category)

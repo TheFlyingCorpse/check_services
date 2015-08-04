@@ -4,6 +4,7 @@
     {
         // Program Settings
         public static bool bDebug;
+
         public static bool bVerbose;
         public static bool bDoShowHelp;
         public static bool bDoInventory;
@@ -46,11 +47,10 @@
         public static int iDelayedGraceDuration = 60;
         public static string strInventoryFormat = "readable";
         public static string strInventoryLevel = "normal";
-        public static string strExpectedState = "Running" ;
+        public static string strExpectedState = "Running";
         public static string strSplitBy = ",";
 
         public static string strCategoryFilePath = "unspecified";
         public static string strCategoryFileFormat = "CSV";
-
     }
 }

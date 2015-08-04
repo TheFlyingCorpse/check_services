@@ -1,5 +1,4 @@
 ﻿using Icinga;
-using System.Collections.Generic;
 
 namespace check_services
 {
