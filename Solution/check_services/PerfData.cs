@@ -3,10 +3,43 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.ServiceProcess;
 
-namespace MonitoringPluginsForWindows
+namespace check_services
 {
-    public static class ProcessPerfCounters
+    public static class PerfData
     {
+        public static int iNumberOfServices = 0;
+        public static int iNumberOfRunningServices = 0;
+        public static int iNumberOfStoppedServices = 0;
+        public static int iNumberOfPendingServices = 0;
+        public static int iNumberOfPausedServices = 0;
+        public static int iNumberOfUnknownServices = 0;
+        public static int iNumberOfCorrectServices = 0;
+        public static int iNumberOfWrongServices = 0;
+
+        public static void ServiceStatusCounting(string status)
+        {
+            // Calculate perfdata only for matches
+            if (status == ServiceControllerStatus.Running.ToString())
+            {
+                iNumberOfRunningServices++;
+            }
+            else if (status == ServiceControllerStatus.Stopped.ToString())
+            {
+                iNumberOfStoppedServices++;
+            }
+            else if (status == ServiceControllerStatus.Paused.ToString())
+            {
+                iNumberOfPausedServices++;
+            }
+            else if (status == ServiceControllerStatus.StartPending.ToString() ||
+                status == ServiceControllerStatus.StopPending.ToString() ||
+                status == ServiceControllerStatus.PausePending.ToString() ||
+                status == ServiceControllerStatus.ContinuePending.ToString())
+            {
+                iNumberOfPendingServices++;
+            }
+        }
+
         [StructLayout(LayoutKind.Sequential)]
         internal sealed class SERVICE_STATUS_PROCESS
         {

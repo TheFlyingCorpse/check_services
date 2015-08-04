@@ -1,26 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
-//namespace BaconMonitoring
-//{
-    internal class WinServiceDefined
-    {
-        public String ServiceName { get; private set; }
-        public String DisplayNamea { get; private set; }
-        public String StartType { get; private set; }
-        public String ExpectedStatus { get; private set; }
-        public String ServiceCategory { get; private set; }
-
-        public WinServiceDefined(String serviceName, String displayName, String serviceCategory, String startType, String expectedStatus)
-        {
-            ServiceName = serviceName;
-            DisplayNamea = displayName;
-            StartType = startType;
-            ExpectedStatus = expectedStatus;
-            ServiceCategory = serviceCategory;
-        }
-    }
-
-    internal class WinServiceActual
+namespace check_services
+{
+    class WinServiceActual
     {
         public String ServiceName { get; private set; }
         public String DisplayName { get; private set; }
@@ -52,4 +37,4 @@
             ServicesDependingOn = servicesDependingOn;
         }
     }
-//}
+}

@@ -84,15 +84,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Check.cs" />
     <Compile Include="icinga2clr.cs" />
     <Compile Include="IcingaSerializer.cs" />
+    <Compile Include="Inventory.cs" />
     <Compile Include="Mono.Options\Options.cs" />
-    <Compile Include="ProcessPerfCounters.cs" />
+    <Compile Include="PerfData.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReadableSerializer.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="WinServices.cs" />
+    <Compile Include="WinServiceActual.cs" />
+    <Compile Include="WinServiceDefined.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
