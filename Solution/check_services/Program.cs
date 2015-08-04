@@ -13,9 +13,9 @@ using System.Security.Principal;
 using System.ServiceProcess;
 using MonitoringPluginsForWindows;
 
-namespace MonitoringPluginsForWindows
+namespace check_services
 {
-    public class check_services
+    public class Program
     {
         private enum StartType : int
         {
@@ -42,12 +42,8 @@ namespace MonitoringPluginsForWindows
         private static string strFileOwner = "";
         private static string strImagePath = "";
         private static string strResolvedImagePath = "";
-        private static string strFileFormat = "CSV";
-        private static string strCategoryFilePath = "unspecified";
 
         private static bool errorServices = false;
-        private static bool do_debug = false;
-        private static bool do_verbose = false;
         private static bool do_i2 = false;
 
         private static int iNumberOfServices = 0;
@@ -60,34 +56,6 @@ namespace MonitoringPluginsForWindows
         private static int iNumberOfWrongServices = 0;
 
         private static string outputServices = "";
-
-        private static string[] excluded_services = new string[] { "thisshouldprobablyneverbeoverwrittenbysomething" };
-        private static string[] included_services = new string[] { "thisshouldprobablyneverbeoverwrittenbysomething" };
-        private static string[] stopped_services = new string[] { "thisshouldprobablyneverbeoverwrittenbysomething" };
-        private static string[] running_services = new string[] { "thisshouldprobablyneverbeoverwrittenbysomething" };
-        private static string[] categories = new string[] { "thisshouldprobablyneverbeoverwrittenbysomething" };
-        private static string[] warn_categories = new string[] { "thisshouldprobablyneverbeoverwrittenbysomething" };
-
-        private static bool bDefaultIncludeList = false;
-        private static bool bDefaultExcludeList = false;
-        private static bool bDefaultStoppedList = false;
-        private static bool bDefaultRunningList = false;
-        private static bool bDefaultWarnCategoriesList = false;
-        private static bool bDefaultCategoriesList = false;
-
-        private static string[] services_in_system_category = new string[] { "thisshouldprobablyneverbeoverwrittenbysomething" };
-        private static string[] services_in_essential_category = new string[] { "thisshouldprobablyneverbeoverwrittenbysomething" };
-        private static string[] services_in_role_category = new string[] { "thisshouldprobablyneverbeoverwrittenbysomething" };
-        private static string[] services_in_supporting_category = new string[] { "thisshouldprobablyneverbeoverwrittenbysomething" };
-        private static string[] services_in_thirdparty_category = new string[] { "thisshouldprobablyneverbeoverwrittenbysomething" };
-        private static string[] services_in_ignored_category = new string[] { "thisshouldprobablyneverbeoverwrittenbysomething" };
-
-        private static bool bDefaultSystemCategory = false;
-        private static bool bDefaultEssentialCategory = false;
-        private static bool bDefaultRoleCategory = false;
-        private static bool bDefaultSupportingCategory = false;
-        private static bool bDefaultThirdPartyCategory = false;
-        private static bool bDefaultIgnoredCategory = false;
 
         private static int Main(string[] args)
         {
@@ -124,7 +92,6 @@ namespace MonitoringPluginsForWindows
             List<string> temp_services_in_supporting_category = new List<string>();
             List<string> temp_services_in_thirdparty_category = new List<string>();
             List<string> temp_services_in_ignored_category = new List<string>();
-            string temp2_excluded_services;
 
             var p = new OptionSet()
             {
@@ -138,10 +105,12 @@ namespace MonitoringPluginsForWindows
                     v => temp_excluded_services.Add (v)},
                 { "included-svc=", "Excplicity include this service",
                     v => temp_included_services.Add (v)},
-                { "stopped-services=", "This service should be stopped",
+                { "stopped-svc=", "This service should be stopped",
                     v => temp_stopped_services.Add (v)},
-                { "running-services=", "Override CSV, this service should be running",
+                { "running-svc=", "Override CSV, this service should be running",
                     v => temp_running_services.Add (v)},
+                { "warn-on-category=", "Warn on the specified category. Default is Supporting",
+                    v => temp_warn_categories.Add (v)},
                 { "inv-format=", "Inventory output format, default is readable, available are csv,readable,i2conf",
                     v => inventory_format = v },
                 { "inv-level=", "Inventory level, normal or full",
@@ -150,6 +119,22 @@ namespace MonitoringPluginsForWindows
                     v => { do_all_running_only = (v != null); } },
                 { "inv-hide-empty", "Hide empty vars from inventory output.",
                     v => { do_hide_empty_vars = (v != null); } },
+                { "single-check", "Specifies that only one Service is to be checked, simplifies output of perfdata and perfcounters",
+                    v => { do_single_check = (v != null); } },
+                { "expected-state=", "Set the expected state for the service, used primarly with --single-service option",
+                    v => expected_state = v },
+                { "split-by=", "Alternative character to split input options VALUES with",
+                    v => split_by = v },
+                { "check-all-starttypes", "Check all StartTypes against specified Category, not only Automatic",
+                    v => { do_all_starttypes = (v != null); } },
+                { "perfcounter", "Extra performance counters, use with caution",
+                    v => { Settings.bVerbose = (v != null); } },
+                { "delayed-grace=", "Set gracetime for Automatic (Delayed) services after bootup before they must be started",
+                    (int v) => delayed_grace_duration = v },
+                { "hide-long-output", "Hide verbose output from the --check-service command, simple output",
+                    v => { do_hide_long_output = (v != null); } },
+                { "hide-category", "Hide category from the normal output from the --check-service command",
+                    v => { do_hide_category_from_output = (v != null); } },
                 { "svc-in-sys-category=", "Set category of specified service to System",
                     v => temp_services_in_system_category.Add (v)},
                 { "svc-in-ess-category=", "Set category of specified service to Essential",
@@ -162,43 +147,19 @@ namespace MonitoringPluginsForWindows
                     v => temp_services_in_supporting_category.Add (v)},
                 { "svc-in-ign-category=", "Set category of specified service to Ingored",
                     v => temp_services_in_ignored_category.Add (v)},
-                { "warn-on-category=", "Warn on the specified category. Default is Supporting",
-                    v => temp_warn_categories.Add (v)},
-                { "check-all-starttypes", "Check all StartTypes against specified Category, not only Automatic",
-                    v => { do_all_starttypes = (v != null); } },
-                { "perfcounter", "Extra performance counters, use with caution",
-                    v => { do_verbose = (v != null); } },
-                { "delayed-grace=", "Set gracetime for Automatic (Delayed) services after bootup before they must be started",
-                    (int v) => delayed_grace_duration = v },
-                { "hide-long-output", "Hide verbose output from the --check-service command, simple output",
-                    v => { do_hide_long_output = (v != null); } },
-                { "hide-category", "Hide category from the normal output from the --check-service command",
-                    v => { do_hide_category_from_output = (v != null); } },
-                { "expected-state=", "Set the expected state for the service, used primarly with --single-service option",
-                    v => expected_state = v },
-                { "split-by=", "Alternative character to split input options VALUES with",
-                    v => split_by = v },
-                { "single-check", "Specifies that only one Service is to be checked, simplifies output of perfdata and perfcounters",
-                    v => { do_single_check = (v != null); } },
                 { "icinga2", "Set mode to be from icinga2 (WIP)",
                     v => { do_i2 = (v != null); } },
+                { "category-file=", "Path to a file which contains an alternative list of Service to Category definitions",
+                    v => Settings.strCategoryFilePath = v },
+                { "file-format=", "Specify format of the file path given in category-file, default CSV",
+                    v => Settings.strCategoryFileFormat = v },
                 { "v|verbose", "Verbose output",
-                    v => { do_verbose = (v != null); } },
+                    v => { Settings.bVerbose = (v != null); } },
                 { "d|debug", "Debug output",
-                    v => { do_debug = (v != null); } },
+                    v => { Settings.bDebug = (v != null); } },
                 { "h|help", "Show this help",
                     v => { do_show_help = (v != null); } }
             };
-
-            ////p.Setup<string>('y', "file-format")
-            ////    .Callback(value => strFileFormat = value)
-            ////    .WithDescription("\tAdvanced: Argument to specify format of the file path given in category-file, assumes CSV if nothing else is specified")
-            ////    .SetDefault("csv");
-
-            ////p.Setup<string>('Y', "category-file")
-            ////    .Callback(value => strCategoryFilePath = value)
-            ////    .WithDescription("\tAdvanced: Argument to provide for both inventory and checks a category file that provides categories for the returned inventory or the categories switch to exclude everything not in those categories.")
-            ////    .SetDefault("unspecified");
 
             List<string> extra;
             try
@@ -207,9 +168,7 @@ namespace MonitoringPluginsForWindows
             }
             catch (OptionException e)
             {
-                Console.Write("greet: ");
-                Console.WriteLine(e.Message);
-                Console.WriteLine("Try `greet --help' for more information.");
+                Console.WriteLine("Error occured during parsing the arguments: " + e);
                 return (int)ServiceState.ServiceCritical;
             }
 
@@ -304,137 +263,137 @@ namespace MonitoringPluginsForWindows
             string temp;
             if (temp_excluded_services.Count > 0)
             {
-                excluded_services = SplitList(temp_excluded_services, split_by);
-                PrintArray("excluded_services", excluded_services);
+                Settings.excluded_services = SplitList(temp_excluded_services, split_by);
+                PrintArray("Settings.excluded_services", Settings.excluded_services);
             }
             if (temp_included_services.Count > 0)
             {
-                included_services = SplitList(temp_included_services, split_by);
-                PrintArray("included_services", included_services);
+                Settings.included_services = SplitList(temp_included_services, split_by);
+                PrintArray("Settings.included_services", Settings.included_services);
             }
             if (temp_stopped_services.Count > 0)
             {
-                stopped_services = SplitList(temp_stopped_services, split_by);
-                PrintArray("stopped_services", stopped_services);
+                Settings.stopped_services = SplitList(temp_stopped_services, split_by);
+                PrintArray("Settings.stopped_services", Settings.stopped_services);
             }
             if (temp_running_services.Count > 0)
             {
-                running_services = SplitList(temp_running_services, split_by);
-                PrintArray("running_services", running_services);
+                Settings.running_services = SplitList(temp_running_services, split_by);
+                PrintArray("Settings.running_services", Settings.running_services);
             }
             if (temp_categories.Count > 0)
             {
-                categories = SplitList(temp_categories, split_by);
-                PrintArray("categories", categories);
+                Settings.categories = SplitList(temp_categories, split_by);
+                PrintArray("Settings.categories", Settings.categories);
             }
             if (temp_warn_categories.Count > 0)
             {
-                warn_categories = SplitList(temp_warn_categories, split_by);
-                PrintArray("warn_categories", warn_categories);
+                Settings.warn_categories = SplitList(temp_warn_categories, split_by);
+                PrintArray("Settings.warn_categories", Settings.warn_categories);
             }
             if (temp_services_in_system_category.Count > 0)
             {
-                services_in_system_category = SplitList(temp_services_in_system_category, split_by);
-                PrintArray("services_in_system_category", services_in_system_category);
+                Settings.services_in_system_category = SplitList(temp_services_in_system_category, split_by);
+                PrintArray("Settings.services_in_system_category", Settings.services_in_system_category);
             }
             if (temp_services_in_essential_category.Count > 0)
             {
-                services_in_essential_category = SplitList(temp_services_in_essential_category, split_by);
-                PrintArray("services_in_essential_category", services_in_essential_category);
+                Settings.services_in_essential_category = SplitList(temp_services_in_essential_category, split_by);
+                PrintArray("Settings.services_in_essential_category", Settings.services_in_essential_category);
             }
             if (temp_services_in_role_category.Count > 0)
             {
-                services_in_role_category = SplitList(temp_services_in_role_category, split_by);
-                PrintArray("services_in_role_category", services_in_role_category);
+                Settings.services_in_role_category = SplitList(temp_services_in_role_category, split_by);
+                PrintArray("Settings.services_in_role_category", Settings.services_in_role_category);
             }
             if (temp_services_in_supporting_category.Count > 0)
             {
-                services_in_supporting_category = SplitList(temp_services_in_supporting_category, split_by);
-                PrintArray("services_in_supporting_category", services_in_supporting_category);
+                Settings.services_in_supporting_category = SplitList(temp_services_in_supporting_category, split_by);
+                PrintArray("Settings.services_in_supporting_category", Settings.services_in_supporting_category);
             }
             if (temp_services_in_thirdparty_category.Count > 0)
             {
-                services_in_thirdparty_category = SplitList(temp_services_in_thirdparty_category, split_by);
-                PrintArray("services_in_thirdparty_category", services_in_thirdparty_category);
+                Settings.services_in_thirdparty_category = SplitList(temp_services_in_thirdparty_category, split_by);
+                PrintArray("Settings.services_in_thirdparty_category", Settings.services_in_thirdparty_category);
             }
             if (temp_services_in_ignored_category.Count > 0)
             {
-                services_in_ignored_category = SplitList(temp_services_in_ignored_category, split_by);
-                PrintArray("services_in_ignored_category", services_in_ignored_category);
+                Settings.services_in_ignored_category = SplitList(temp_services_in_ignored_category, split_by);
+                PrintArray("Settings.services_in_ignored_category", Settings.services_in_ignored_category);
             }
 
-            if (strCategoryFilePath != "unspecified")
+            if (Settings.strCategoryFilePath != "unspecified")
             {
-                if (File.Exists(strCategoryFilePath) == false)
+                if (File.Exists(Settings.strCategoryFilePath) == false)
                 {
-                    Console.WriteLine("Error: Specified csv_file not found: " + strCategoryFilePath);
+                    Console.WriteLine("Error: Specified csv_file not found: " + Settings.strCategoryFilePath);
                     return (int)ServiceState.ServiceUnknown;
                 }
             }
 
-            if (excluded_services.Contains("thisshouldprobablyneverbeoverwrittenbysomething"))
+            if (Settings.excluded_services.Contains("thisshouldprobablyneverbeoverwrittenbysomething"))
             {
-                if (do_verbose == true)
-                    Console.WriteLine("INFO: Default excluded_services list.");
-                bDefaultExcludeList = true;
+                if (Settings.bVerbose == true)
+                    Console.WriteLine("INFO: Default Settings.excluded_services list.");
+                Settings.bDefaultExcludeList = true;
             }
 
-            if (included_services.Contains("thisshouldprobablyneverbeoverwrittenbysomething"))
+            if (Settings.included_services.Contains("thisshouldprobablyneverbeoverwrittenbysomething"))
             {
-                if (do_verbose == true)
-                    Console.WriteLine("INFO: Default included_services list.");
-                bDefaultIncludeList = true;
+                if (Settings.bVerbose == true)
+                    Console.WriteLine("INFO: Default Settings.included_services list.");
+                Settings.bDefaultIncludeList = true;
             }
 
-            if (categories.Contains("thisshouldprobablyneverbeoverwrittenbysomething"))
+            if (Settings.categories.Contains("thisshouldprobablyneverbeoverwrittenbysomething"))
             {
-                if (do_verbose == true)
-                    Console.WriteLine("INFO: Default categories list, setting it to ThirdParty.");
-                bDefaultCategoriesList = true;
-                categories = new string[] { "ThirdParty" };
+                if (Settings.bVerbose == true)
+                    Console.WriteLine("INFO: Default Settings.categories list, setting it to ThirdParty.");
+                Settings.bDefaultCategoriesList = true;
+                Settings.categories = new string[] { "ThirdParty" };
             }
-            else if (categories.Contains("Basic"))
+            else if (Settings.categories.Contains("Basic"))
             {
-                categories = new string[] { "Essential", "System", "Supporting", "Role" };
-            }
-
-            if (warn_categories.Contains("thisshouldprobablyneverbeoverwrittenbysomething"))
-            {
-                if (do_verbose == true)
-                    Console.WriteLine("INFO: Default warn_categories list.");
-                bDefaultWarnCategoriesList = true;
-                warn_categories = new string[] { "Supporting" };
+                Settings.categories = new string[] { "Essential", "System", "Supporting", "Role" };
             }
 
-            if (services_in_system_category.Contains("thisshouldprobablyneverbeoverwrittenbysomething"))
+            if (Settings.warn_categories.Contains("thisshouldprobablyneverbeoverwrittenbysomething"))
             {
-                if (do_verbose == true)
-                    Console.WriteLine("INFO: Default services_in_system_category list.");
-                bDefaultSystemCategory = true;
+                if (Settings.bVerbose == true)
+                    Console.WriteLine("INFO: Default Settings.warn_categories list.");
+                Settings.bDefaultWarnCategoriesList = true;
+                Settings.warn_categories = new string[] { "Supporting" };
             }
-            if (services_in_essential_category.Contains("thisshouldprobablyneverbeoverwrittenbysomething"))
+
+            if (Settings.services_in_system_category.Contains("thisshouldprobablyneverbeoverwrittenbysomething"))
             {
-                if (do_verbose == true)
-                    Console.WriteLine("INFO: Default services_in_essential_category list.");
-                bDefaultEssentialCategory = true;
+                if (Settings.bVerbose == true)
+                    Console.WriteLine("INFO: Default Settings.services_in_system_category list.");
+                Settings.bDefaultSystemCategory = true;
             }
-            if (services_in_role_category.Contains("thisshouldprobablyneverbeoverwrittenbysomething"))
+            if (Settings.services_in_essential_category.Contains("thisshouldprobablyneverbeoverwrittenbysomething"))
             {
-                if (do_verbose == true)
-                    Console.WriteLine("INFO: Default services_in_role_category list.");
-                bDefaultRoleCategory = true;
+                if (Settings.bVerbose == true)
+                    Console.WriteLine("INFO: Default Settings.services_in_essential_category list.");
+                Settings.bDefaultEssentialCategory = true;
             }
-            if (services_in_supporting_category.Contains("thisshouldprobablyneverbeoverwrittenbysomething"))
+            if (Settings.services_in_role_category.Contains("thisshouldprobablyneverbeoverwrittenbysomething"))
             {
-                if (do_verbose == true)
-                    Console.WriteLine("INFO: Default services_in_supporting_category list.");
-                bDefaultSupportingCategory = true;
+                if (Settings.bVerbose == true)
+                    Console.WriteLine("INFO: Default Settings.services_in_role_category list.");
+                Settings.bDefaultRoleCategory = true;
             }
-            if (services_in_ignored_category.Contains("thisshouldprobablyneverbeoverwrittenbysomething"))
+            if (Settings.services_in_supporting_category.Contains("thisshouldprobablyneverbeoverwrittenbysomething"))
             {
-                if (do_verbose == true)
-                    Console.WriteLine("INFO: Default services_in_ignored_category list.");
-                bDefaultIgnoredCategory = true;
+                if (Settings.bVerbose == true)
+                    Console.WriteLine("INFO: Default Settings.services_in_supporting_category list.");
+                Settings.bDefaultSupportingCategory = true;
+            }
+            if (Settings.services_in_ignored_category.Contains("thisshouldprobablyneverbeoverwrittenbysomething"))
+            {
+                if (Settings.bVerbose == true)
+                    Console.WriteLine("INFO: Default Settings.services_in_ignored_category list.");
+                Settings.bDefaultIgnoredCategory = true;
             }
             return returncode;
         }
@@ -521,7 +480,7 @@ namespace MonitoringPluginsForWindows
 
         private static void PrintArray(string arrayname, Array array)
         {
-            if (do_verbose)
+            if (Settings.bVerbose)
             {
                 Console.WriteLine("DEBUG - Array: " + arrayname);
                 foreach (var row in array)
@@ -544,7 +503,7 @@ namespace MonitoringPluginsForWindows
             }
             catch (Exception e)
             {
-                if (do_debug == true && do_verbose == true)
+                if (Settings.bDebug == true && Settings.bVerbose == true)
                 {
                     Console.WriteLine("Did not read " + key + " from Registry, error: " + e);
                 }
@@ -564,7 +523,7 @@ namespace MonitoringPluginsForWindows
             }
             catch (Exception e)
             {
-                if (do_debug == true && do_verbose == true)
+                if (Settings.bDebug == true && Settings.bVerbose == true)
                 {
                     Console.WriteLine("Did not read " + key + " from Registry, error: " + e);
                 }
@@ -584,7 +543,7 @@ namespace MonitoringPluginsForWindows
             }
             catch (Exception e)
             {
-                if (do_debug == true)
+                if (Settings.bDebug == true)
                 {
                     Console.WriteLine("Did not read " + key + " from Registry, error: " + e);
                 }
@@ -815,7 +774,7 @@ namespace MonitoringPluginsForWindows
             if (GetUpTime() < delayed_grace_duration)
                 bDelayedGracePeriod = true;
 
-            if (do_hide_category_from_output == false && categories.Length >= 2)
+            if (do_hide_category_from_output == false && Settings.categories.Length >= 2)
                 bIncludeCategoryInOutput = true;
 
             // Find Services that we have that is in the definition.
@@ -830,7 +789,7 @@ namespace MonitoringPluginsForWindows
 
                 
 
-                if (warn_categories.Contains(ActualService.ServiceCategory))
+                if (Settings.warn_categories.Contains(ActualService.ServiceCategory))
                     bWarningForServiceCategory = true;
 
                 // Single check services should bypass do_all_starttypes check further down.
@@ -847,13 +806,13 @@ namespace MonitoringPluginsForWindows
                 // Skip past this service if we only check for services with Automatic StartMode regardless of anything else.
                 if (do_all_starttypes == false && ActualService.StartType != (string)ServiceStartMode.Automatic.ToString())
                 {
-                    if (do_verbose == true)
+                    if (Settings.bVerbose == true)
                         Console.WriteLine("Skipping, Service is not 'Automatic': " + ActualService.ServiceName);
                     continue;
                 }
 
                 // If match for stopped service
-                if (stopped_services.Contains(ActualService.ServiceName))
+                if (Settings.stopped_services.Contains(ActualService.ServiceName))
                 {
                     returncode = CheckStoppedService(returncode, ActualService, bIncludeCategoryInOutput);
                     PerfDataCounters(ActualService.CurrentStatus);
@@ -863,7 +822,7 @@ namespace MonitoringPluginsForWindows
                     continue;
                 }
                 // If match for started service
-                else if (running_services.Contains(ActualService.ServiceName))
+                else if (Settings.running_services.Contains(ActualService.ServiceName))
                 {
                     returncode = CheckRunningService(returncode, ActualService, bIncludeCategoryInOutput);
                     PerfDataCounters(ActualService.CurrentStatus);
@@ -889,11 +848,11 @@ namespace MonitoringPluginsForWindows
                         break;
                     }
 
-                    // Did not match, trying until end of list, will continue until match found (break) or no found (match categories)
+                    // Did not match, trying until end of list, will continue until match found (break) or no found (match Settings.categories)
                 }
 
                 // If match for the Category and it is a service that starts Automatically.
-                if (categories.Contains(ActualService.ServiceCategory) && ActualService.StartType == ServiceStartMode.Automatic.ToString() && bMatchedService == false)
+                if (Settings.categories.Contains(ActualService.ServiceCategory) && ActualService.StartType == ServiceStartMode.Automatic.ToString() && bMatchedService == false)
                 {
                     returncode = CheckCategories(returncode, ActualService, bDelayedGracePeriod, bIncludeCategoryInOutput, bWarningForServiceCategory);
                     PerfDataCounters(ActualService.CurrentStatus);
@@ -1318,13 +1277,13 @@ namespace MonitoringPluginsForWindows
 
         public static bool ImportServiceDefinitions()
         {
-            if (strCategoryFilePath == "unspecified")
+            if (Settings.strCategoryFilePath == "unspecified")
             {
                 bool temp = InsertDefaultServiceDefinitions();
                 return temp;
             }
 
-            if (strFileFormat == "CSV")
+            if (Settings.strCategoryFileFormat == "CSV")
                 return ImportServiceDefinitionsCSV();
 
             return false;
@@ -1335,7 +1294,7 @@ namespace MonitoringPluginsForWindows
             try
             {
                 // Import the definition file.
-                DataTable csvTable = GetDataTabletFromCSVFile(strCategoryFilePath);
+                DataTable csvTable = GetDataTabletFromCSVFile(Settings.strCategoryFilePath);
                 foreach (DataRow csvRow in csvTable.Rows)
                 {
                     string sServiceNameCSV = (string)csvRow["ServiceName"];
@@ -1378,51 +1337,51 @@ namespace MonitoringPluginsForWindows
                     // Skip service for inventory if we only scare about running services in the inventory output.
                     if (do_all_running_only == true && do_inventory == true && scService.Status.ToString() != ServiceControllerStatus.Running.ToString())
                     {
-                        if (do_verbose == true)
+                        if (Settings.bVerbose == true)
                             Console.WriteLine("INFO: Service is not running, skipping: " + sServiceName);
                         continue;
                     }
 
                     // Skip all services that match excluderules
-                    if (excluded_services.Contains(sServiceName) && bDefaultExcludeList == false)
+                    if (Settings.excluded_services.Contains(sServiceName) && Settings.bDefaultExcludeList == false)
                     {
-                        if (do_verbose == true)
+                        if (Settings.bVerbose == true)
                             Console.WriteLine("INFO: Service in exclude list, skipping: " + sServiceName);
 
                         continue;
                     }
 
                     // Skip all services not set to include
-                    if (bDefaultIncludeList == true)
+                    if (Settings.bDefaultIncludeList == true)
                     {
-                        if (do_debug == true)
+                        if (Settings.bDebug == true)
                             Console.WriteLine("DEBUG: Included service: " + sServiceName);
                     }
-                    else if (!included_services.Contains(sServiceName) && bDefaultIncludeList == false)
+                    else if (!Settings.included_services.Contains(sServiceName) && Settings.bDefaultIncludeList == false)
                     {
-                        if (do_debug == true)
-                            Console.WriteLine("INFO: Service not in included_services: " + sServiceName);
+                        if (Settings.bDebug == true)
+                            Console.WriteLine("INFO: Service not in Settings.included_services: " + sServiceName);
                         continue;
                     }
-                    else if (included_services.Contains(sServiceName) && bDefaultIncludeList == false)
+                    else if (Settings.included_services.Contains(sServiceName) && Settings.bDefaultIncludeList == false)
                     {
-                        if (do_verbose == true)
+                        if (Settings.bVerbose == true)
                             Console.WriteLine("INFO: Included service: " + sServiceName);
                     }
 
                     strCategory = ServiceCategoryLookup(sServiceName);
 
                     // Match if the returned category matches the service, if it does not then skip
-                    if (categories.Contains(strCategory))
+                    if (Settings.categories.Contains(strCategory))
                     {
-                        if (do_debug)
+                        if (Settings.bDebug)
                         {
                             Console.WriteLine("DEBUG: Service matching category");
                         }
                     }
-                    else if (!categories.Contains(strCategory) && bDefaultCategoriesList == false)
+                    else if (!Settings.categories.Contains(strCategory) && Settings.bDefaultCategoriesList == false)
                     {
-                        if (do_verbose)
+                        if (Settings.bVerbose)
                             Console.WriteLine("INFO: Skipping service due to category not matched: " + sServiceName);
                         continue;
                     }
@@ -1438,7 +1397,7 @@ namespace MonitoringPluginsForWindows
                         }
                         catch (Exception e)
                         {
-                            if (do_verbose || do_debug)
+                            if (Settings.bVerbose || Settings.bDebug)
                                 Console.WriteLine("ERROR: Looking up DependentService for '" + sServiceName + "' resulted in an exception, it is likely not installed:" + e);
                         }
                     }
@@ -1451,7 +1410,7 @@ namespace MonitoringPluginsForWindows
                         }
                         catch (Exception e)
                         {
-                            if (do_verbose || do_debug)
+                            if (Settings.bVerbose || Settings.bDebug)
                                 Console.WriteLine("ERROR: Looking up DepdendendOn for '" + sServiceName + "' resulted in an exception, it is likely not installed:" + e);
                         }
                     }
@@ -1477,22 +1436,22 @@ namespace MonitoringPluginsForWindows
         {
             if (serviceName != "")
             {
-                if (bDefaultSystemCategory == false && services_in_system_category.Contains(serviceName))
+                if (Settings.bDefaultSystemCategory == false && Settings.services_in_system_category.Contains(serviceName))
                     return "System";
 
-                if (bDefaultEssentialCategory == false && services_in_essential_category.Contains(serviceName))
+                if (Settings.bDefaultEssentialCategory == false && Settings.services_in_essential_category.Contains(serviceName))
                     return "Essential";
 
-                if (bDefaultRoleCategory == false && services_in_role_category.Contains(serviceName))
+                if (Settings.bDefaultRoleCategory == false && Settings.services_in_role_category.Contains(serviceName))
                     return "Role";
 
-                if (bDefaultSupportingCategory == false && services_in_supporting_category.Contains(serviceName))
+                if (Settings.bDefaultSupportingCategory == false && Settings.services_in_supporting_category.Contains(serviceName))
                     return "Supporting";
 
-                if (bDefaultThirdPartyCategory == false && services_in_thirdparty_category.Contains(serviceName))
+                if (Settings.bDefaultThirdPartyCategory == false && Settings.services_in_thirdparty_category.Contains(serviceName))
                     return "ThirdParty";
 
-                if (bDefaultIgnoredCategory == false && services_in_ignored_category.Contains(serviceName))
+                if (Settings.bDefaultIgnoredCategory == false && Settings.services_in_ignored_category.Contains(serviceName))
                     return "Ignored";
 
                 Dictionary<String, WinServiceDefined> listOverDefinedServices = listWinServicesFromDefinition.ToDictionary(o => o.ServiceName, o => o);
