@@ -11,9 +11,9 @@ namespace check_services
             int temp = 3;
             int returncode = 0;
 
-            bool do_inventory = false;
-            bool do_services = false;
-            bool do_show_help = false;
+            bool bDoInventory = false;
+            bool bDoCheckServices = false;
+            bool bDoShowHelp = false;
             bool do_all_running_only = false;
             bool do_all_starttypes = false;
             bool do_hide_long_output = false;
@@ -45,9 +45,9 @@ namespace check_services
             var p = new OptionSet()
             {
                 { "i|inventory", "Provide the inventory",
-                    v => { do_inventory = (v != null); } },
+                    v => { bDoInventory = (v != null); } },
                 { "c|check-services", "Check the health status of the local services",
-                    v => { do_services = (v != null); } },
+                    v => { bDoCheckServices = (v != null); } },
                 { "category=", "Category to check, default is ThirdParty",
                     v => temp_categories.Add (v)},
                 { "excluded-svc=", "Exclude this service",
@@ -105,7 +105,7 @@ namespace check_services
                 { "d|debug", "Debug output",
                     v => { Settings.bDebug = (v != null); } },
                 { "h|help", "Show this help",
-                    v => { do_show_help = (v != null); } }
+                    v => { bDoShowHelp = (v != null); } }
             };
 
             List<string> extra;
@@ -121,7 +121,7 @@ namespace check_services
             }
 
             // Return unknown if we do not check services or inventory.
-            if (do_services == false && do_inventory == false)
+            if (bDoCheckServices == false && bDoInventory == false)
             {
                 Handler.ShowHelp(p);
                 I2CheckResult.State = ServiceState.ServiceUnknown;
@@ -143,20 +143,20 @@ namespace check_services
             expected_state = Inventory.CleanStatus(expected_state);
 
             // Inventory is blocked from running at the same time as other checks, thus it is run first if specified.
-            if (do_inventory == true && inventory_format == "i2conf")
+            if (bDoInventory == true && inventory_format == "i2conf")
             {
                 temp = Inventory.OutputI2Conf(inventory_level, do_all_running_only, do_hide_empty_vars);
                 I2CheckResult.State = ServiceState.ServiceOK;
                 return I2CheckResult;
             }
-            else if (do_inventory == true)
+            else if (bDoInventory == true)
             {
                 I2CheckResult.Output = "Unknown inventory, format: '" + inventory_format + "', level: '" + inventory_level + "'";
                 I2CheckResult.State = ServiceState.ServiceUnknown;
                 return I2CheckResult;
             }
 
-            if (do_services == true)
+            if (bDoCheckServices == true)
             {
                 returncode = Checks.Services(inventory_level, returncode, do_all_running_only, do_all_starttypes, delayed_grace_duration, do_hide_category_from_output, do_single_check, expected_state);
             }

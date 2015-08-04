@@ -11,16 +11,16 @@ namespace check_services
         {
             int returncode = 0;
 
-            returncode = ConsoleHandler.ParseConsoleArgs(returncode, args);
+            returncode = ConsoleHandler.ParseArgs(returncode, args);
 
             return (int)returncode;
         }
 
-        private static CheckResult Check(string[] args)
+        public static CheckResult Check(string[] args)
         {
             CheckResult I2CheckResult = new CheckResult();
 
-            I2CheckResult = ConsoleHandler.ParseIcinga2Args(I2CheckResult, args);
+            I2CheckResult = Icinga2Handler.ParseArgs(I2CheckResult, args);
 
             return I2CheckResult;
         }

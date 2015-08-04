@@ -26,18 +26,7 @@ namespace check_services
         public static List<WinServiceDefined> listWinServicesFromDefinition = new List<WinServiceDefined>();
         public static List<WinServiceActual> listWinServicesOnComputer = new List<WinServiceActual>();
 
-        private static int iRegKeyStart = 0;
-        private static int iRegKeyDelayedAutoStart = 0;
-        private static int iRegKeyWOW64 = 0;
-        private static bool bRegKeyDelayedAutoStart = false;
-        private static bool bRegKeyWOW64 = false;
-
-        private static string strObjectName = "";
-        private static string strFileOwner = "";
-        private static string strImagePath = "";
-        private static string strResolvedImagePath = "";
-
-        public static bool ServicesOnMachine(string inventory_level, bool do_all_running_only, bool do_inventory)
+        public static bool ServicesOnMachine(string inventory_level, bool do_all_running_only, bool bDoInventory)
         {
             ServiceController[] scServices;
             scServices = ServiceController.GetServices();
@@ -57,7 +46,7 @@ namespace check_services
                     string sDisplayName = scService.DisplayName.ToString();
 
                     // Skip service for inventory if we only scare about running services in the inventory output.
-                    if (do_all_running_only == true && do_inventory == true && scService.Status.ToString() != ServiceControllerStatus.Running.ToString())
+                    if (do_all_running_only == true && bDoInventory == true && scService.Status.ToString() != ServiceControllerStatus.Running.ToString())
                     {
                         if (Settings.bVerbose == true)
                             Console.WriteLine("INFO: Service is not running, skipping: " + sServiceName);
@@ -139,7 +128,16 @@ namespace check_services
 
                     Array dependentServices = listDependentServices.ToArray();
                     Array servicesDependedOn = listServicesDependedOn.ToArray();
-                    test = ServiceStartupMode(inventory_level, sServiceName);
+
+                    int iRegKeyStart = 0;
+                    bool bRegKeyDelayedAutoStart;
+                    bool bRegKeyWOW64;
+                    string strObjectName;
+                    string strFileOwner = "";
+                    string strImagePath = "";
+                    string strResolvedImagePath = "";
+
+                    test = ServiceStartupMode(inventory_level, sServiceName, out iRegKeyStart, out bRegKeyDelayedAutoStart, out bRegKeyWOW64, out strObjectName, out strFileOwner, out strImagePath, out strResolvedImagePath );
                     ServiceControllerStatus serviceStatus = scService.Status;
 
                     // Store the service to the list.
@@ -191,43 +189,32 @@ namespace check_services
             return "errorInServiceCategoryLookup";
         }
 
-        public static int ServiceStartupMode(string inventory_level, string service)
+        public static int ServiceStartupMode(string inventory_level, string service, out int iRegKeyStart, out bool bRegKeyDelayedAutoStart, out bool bRegKeyWOW64, out string strObjectName, out string strFileOwner, out string strImagePath, out string strResolvedImagePath)
         {
             string key;
 
             //string strImagePath = "";
-            strObjectName = "";
-            iRegKeyStart = 0;
-            iRegKeyDelayedAutoStart = 0;
-
-            if (inventory_level == "full")
-            {
-                iRegKeyWOW64 = 0;
-                strFileOwner = "";
-                strImagePath = "";
-                strResolvedImagePath = "";
-            }
 
             // Read Start value
             key = "Start";
-            iRegKeyStart = Inventory.RegReadIntFromHKLMService(service, key);
+            RegReadIntFromHKLMService(service, key, out iRegKeyStart);
 
             key = "DelayedAutoStart";
-            bRegKeyDelayedAutoStart = Inventory.RegReadBoolFromHKLMService(service, key);
+            RegReadBoolFromHKLMService(service, key, out bRegKeyDelayedAutoStart);
 
             key = "ObjectName";
-            strObjectName = Inventory.RegReadStringFromHKLMService(service, key);
+            RegReadStringFromHKLMService(service, key, out strObjectName);
 
             if (inventory_level == "full")
             {
                 // Read WOW64 value
                 key = "WOW64";
-                iRegKeyWOW64 = Inventory.RegReadIntFromHKLMService(service, key);
-                bRegKeyWOW64 = Inventory.RegReadBoolFromHKLMService(service, key);
+                //RegReadIntFromHKLMService(service, key, out iRegKeyWOW64);
+                RegReadBoolFromHKLMService(service, key, out bRegKeyWOW64);
 
                 // Read ImagePath value
                 key = "ImagePath";
-                strImagePath = Inventory.RegReadStringFromHKLMService(service, key);
+                RegReadStringFromHKLMService(service, key, out strImagePath);
 
                 // Try to find the correct path to the service, so we can find the owner of the file.
                 try
@@ -240,7 +227,7 @@ namespace check_services
                     if (!File.Exists(@strResolvedImagePath))
                     {
                         // If WOW64 flag set, this is usually only in 64bit environments, if its 32bit it "should" have been found in the previous test already.
-                        if (iRegKeyWOW64 == 1)
+                        if (bRegKeyWOW64)
                         {
                             // Trying to guess if it is inside syswow64 due to 32bit flag set (64bit system expected).
                             string WinDir = Environment.ExpandEnvironmentVariables("%WinDir%");
@@ -251,6 +238,7 @@ namespace check_services
                             if (!File.Exists(@resolvedpath))
                             {
                                 strResolvedImagePath = "Unable to locate file" + @strResolvedImagePath;
+                                strFileOwner = "";
                                 return (int)ServiceState.ServiceUnknown;
                             }
                             else
@@ -262,6 +250,7 @@ namespace check_services
                         {
                             // Console.WriteLine("Unable to find file:" + strImagePath + "!");
                             strResolvedImagePath = "Unable to locate file" + @strResolvedImagePath;
+                            strFileOwner = "";
                             return (int)ServiceState.ServiceUnknown;
                         }
                     }
@@ -273,19 +262,23 @@ namespace check_services
 
                     var ntAccount = sid.Translate(typeof(NTAccount));
                     strFileOwner = ntAccount.ToString();
+                    return (int)ServiceState.ServiceOK;
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine("Error while finding the executable or owner:" + e);
                 }
             }
-
+            strFileOwner = "";
+            strImagePath = "";
+            strResolvedImagePath = "";
+            bRegKeyWOW64 = false;
             return (int)ServiceState.ServiceOK;
         }
 
-        public static int RegReadIntFromHKLMService(string service, string key)
+        public static int RegReadIntFromHKLMService(string service, string key, out int value)
         {
-            int value = 0;
+            value = 0;
             try
             {
                 using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"System\CurrentControlSet\Services\" + service))
@@ -303,9 +296,9 @@ namespace check_services
             return value;
         }
 
-        public static bool RegReadBoolFromHKLMService(string service, string key)
+        public static bool RegReadBoolFromHKLMService(string service, string key, out bool value)
         {
-            bool value = false;
+            value = false;
             try
             {
                 using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"System\CurrentControlSet\Services\" + service))
@@ -323,9 +316,9 @@ namespace check_services
             return value;
         }
 
-        public static string RegReadStringFromHKLMService(string service, string key)
+        public static string RegReadStringFromHKLMService(string service, string key, out string value)
         {
-            string value = "missing value";
+            value = "missing value";
             try
             {
                 using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"System\CurrentControlSet\Services\" + service))
