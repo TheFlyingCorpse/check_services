@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Mono.Options;
 
 namespace check_services
 {
@@ -102,7 +101,11 @@ namespace check_services
                 Console.WriteLine("Error occured during parsing the arguments: " + e);
                 return (int)ServiceState.ServiceCritical;
             }
-
+            if (Settings.bDoShowHelp)
+            {
+                Handler.ShowHelp(p);
+                return (int)ServiceState.ServiceUnknown;
+            }
             // Return unknown if we do not check services or inventory.
             if (Settings.bDoCheckServices == false && Settings.bDoInventory == false)
             {
@@ -126,30 +129,45 @@ namespace check_services
         {
             if (temp_excluded_services.Count > 0)
             {
+                if (Settings.bDebug)
+                    Console.WriteLine("temp excluded services count: " + temp_excluded_services.Count.ToString());
+
                 Settings.ExcludedServices = SplitList(temp_excluded_services);
                 PrintArray("ExcludedServices", Settings.ExcludedServices);
                 Settings.bDefaultExcludeList = false;
             }
             if (temp_included_services.Count > 0)
             {
+                if (Settings.bDebug)
+                    Console.WriteLine("temp included services count: " + temp_included_services.Count.ToString());
+
                 Settings.IncludedServices = SplitList(temp_included_services);
                 PrintArray("IncludedServices", Settings.IncludedServices);
                 Settings.bDefaultIncludeList = false;
             }
             if (temp_stopped_services.Count > 0)
             {
+                if (Settings.bDebug)
+                    Console.WriteLine("temp stopped services count: " + temp_stopped_services.Count.ToString());
+
                 Settings.StoppedServices = SplitList(temp_stopped_services);
                 PrintArray("StoppedServices", Settings.StoppedServices);
                 Settings.bDefaultStoppedList = false;
             }
             if (temp_running_services.Count > 0)
             {
+                if (Settings.bDebug)
+                    Console.WriteLine("temp running services count: " + temp_running_services.Count.ToString());
+
                 Settings.RunningServices = SplitList(temp_running_services);
                 PrintArray("RunningServices", Settings.RunningServices);
                 Settings.bDefaultRunningList = false;
             }
             if (temp_categories.Count > 0)
             {
+                if (Settings.bDebug)
+                    Console.WriteLine("temp categories count: " + temp_categories.Count.ToString());
+
                 Settings.Categories = SplitList(temp_categories);
                 PrintArray("Categories", Settings.Categories);
             }
@@ -207,12 +225,21 @@ namespace check_services
 
             if (Settings.Categories.Contains("thisshouldprobablyneverbeoverwrittenbysomething"))
             {
+                if (Settings.bVerbose)
+                    Console.WriteLine("INFO: Default Categories, setting Category to ThirdParty");
                 Settings.bDefaultCategoriesList = true;
                 Settings.Categories = new string[] { "ThirdParty" };
             }
             else if (Settings.Categories.Contains("Basic"))
             {
+                if (Settings.bVerbose)
+                    Console.WriteLine("INFO: Categories set to Basic, inserting System, Essential, Supporting and Role categories to check for.");
                 Settings.Categories = new string[] { "Essential", "System", "Supporting", "Role" };
+            }
+            else
+            {
+                if (Settings.bVerbose)
+                    Console.WriteLine("INFO: The --category flag has been used");
             }
 
             if (Settings.WarnCategories.Contains("thisshouldprobablyneverbeoverwrittenbysomething"))
@@ -221,6 +248,11 @@ namespace check_services
                     Console.WriteLine("INFO: Default warn_categories list.");
                 Settings.bDefaultWarnCategoriesList = true;
                 Settings.WarnCategories = new string[] { "Supporting" };
+            }
+            else
+            {
+                if (Settings.bVerbose)
+                    Console.WriteLine("INFO: The --warn-on-category flag has been used");
             }
 
             return returncode;
@@ -255,9 +287,11 @@ namespace check_services
 
         public static void ShowHelp(OptionSet p)
         {
-            Console.WriteLine("Usage: " + System.AppDomain.CurrentDomain.FriendlyName + " [OPTIONS]");
+            Console.WriteLine("Usage: " + AppDomain.CurrentDomain.FriendlyName + " [OPTIONS] ");
+            Console.WriteLine("Version: " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version);
             Console.WriteLine("This plugin checks the State of one or more services on the local machine.");
-            Console.WriteLine("You can filter for your services by using category or a combination of category and include/exclude filters. Use the same switch multiple times if you want to");
+            Console.WriteLine("You can filter for your services by using category or a combination of category and include/exclude filters.");
+            Console.WriteLine("Use the same switch multiple times if you want to combine or exclude multiple categories or services");
             Console.WriteLine();
             Console.WriteLine("Options:");
             p.WriteOptionDescriptions(Console.Out);

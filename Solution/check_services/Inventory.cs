@@ -85,18 +85,18 @@ namespace check_services
                     // Match if the returned category matches the service, if it does not then skip
                     if (Settings.Categories.Contains(strCategory))
                     {
-                        if (Settings.bDebug)
+                        if (Settings.bVerbose)
                         {
-                            Console.WriteLine("DEBUG: Service matching category");
+                            Console.WriteLine("DEBUG: Service '" + sServiceName + "'matching category '" + strCategory + "'");
                         }
                     }
-                    else if (!Settings.Categories.Contains(strCategory) && Settings.bDefaultCategoriesList == false)
+                    else if (Settings.bDefaultCategoriesList == false)
                     {
                         if (Settings.bVerbose)
                             Console.WriteLine("INFO: Skipping service due to category not matched: " + sServiceName);
                         continue;
                     }
-
+                    
                     List<string> listDependentServices = new List<string>();
                     List<string> listServicesDependedOn = new List<string>();
 
@@ -180,6 +180,9 @@ namespace check_services
                     var DefinedServiceValue = DefinedService.Value;
                     if (DefinedServiceValue.ServiceName == serviceName)
                     {
+                        if (Settings.bDebug)
+                            Console.WriteLine("DEBUG: Found service '" + serviceName + "' with service definition '" + DefinedServiceValue.ServiceCategory.ToString() + "'");
+
                         return DefinedServiceValue.ServiceCategory.ToString();
                     }
                 }
@@ -288,10 +291,11 @@ namespace check_services
             }
             catch (Exception e)
             {
-                if (Settings.bDebug == true && Settings.bVerbose == true)
-                {
-                    Console.WriteLine("Did not read " + key + " from Registry, error: " + e);
-                }
+                if (Settings.bDebug)
+                    Console.WriteLine("DEBUG: Did not read " + key + " from Registry, it is likely missing, returning value of '" + value + "', this is normal.");
+                if (Settings.bDebug && Settings.bVerbose)
+                    Console.WriteLine("DEBUG: Stacktrace: " + e);
+
             }
             return value;
         }
@@ -308,10 +312,10 @@ namespace check_services
             }
             catch (Exception e)
             {
-                if (Settings.bDebug == true && Settings.bVerbose == true)
-                {
-                    Console.WriteLine("Did not read " + key + " from Registry, error: " + e);
-                }
+                if (Settings.bDebug)
+                    Console.WriteLine("DEBUG: Did not read " + key + " from Registry, it is likely missing, returning value of '" + value + "', this is normal.");
+                if (Settings.bDebug && Settings.bVerbose)
+                    Console.WriteLine("DEBUG: Stacktrace: " + e);
             }
             return value;
         }
@@ -328,10 +332,10 @@ namespace check_services
             }
             catch (Exception e)
             {
-                if (Settings.bDebug == true)
-                {
-                    Console.WriteLine("Did not read " + key + " from Registry, error: " + e);
-                }
+                if (Settings.bDebug)
+                    Console.WriteLine("DEBUG: Did not read " + key + " from Registry, it is likely missing, returning value of '" + value + "', this is normal.");
+                if (Settings.bDebug && Settings.bVerbose)
+                    Console.WriteLine("DEBUG: Stacktrace: " + e);
             }
             return value;
         }
