@@ -60,7 +60,7 @@ namespace check_services
                 { "check-all-starttypes", "Check all StartTypes against specified Category, not only Automatic",
                     v => { Settings.bDoCheckAllStartTypes = (v != null); } },
                 { "perfcounter", "Extra performance counters, use with caution",
-                    v => { Settings.bVerbose = (v != null); } },
+                    v => { Settings.bDoPerfCounters = (v != null); } },
                 { "delayed-grace=", "Set grace time for Automatic (Delayed) services after boot-up before they must be started",
                     (int v) => Settings.iDelayedGraceDuration = v },
                 { "hide-long-output", "Hide verbose output from the --check-service command, simple output",

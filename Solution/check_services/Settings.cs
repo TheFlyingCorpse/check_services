@@ -15,6 +15,8 @@
         public static bool bDoHideCategoryFromOuput;
         public static bool bDoHideEmptyVars;
         public static bool bDoSingleCheck;
+        public static bool bDoPerfCounters;
+        public static bool bAllowGraceStartup;
 
         public static string[] ExcludedServices = new string[] { "thisshouldprobablyneverbeoverwrittenbysomething" };
         public static string[] IncludedServices = new string[] { "thisshouldprobablyneverbeoverwrittenbysomething" };
@@ -44,7 +46,7 @@
         public static bool bDefaultThirdPartyCategory = true;
         public static bool bDefaultIgnoredCategory = true;
 
-        public static int iDelayedGraceDuration = 60;
+        public static int iDelayedGraceDuration = 0;
         public static string strInventoryFormat = "readable";
         public static string strInventoryLevel = "normal";
         public static string strExpectedState = "Running";

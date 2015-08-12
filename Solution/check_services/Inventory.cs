@@ -25,6 +25,8 @@ namespace check_services
 
         public static List<WinServiceDefined> listWinServicesFromDefinition = new List<WinServiceDefined>();
         public static List<WinServiceActual> listWinServicesOnComputer = new List<WinServiceActual>();
+        public static List<string> listServicesWithElevatedNeeds = new List<string>();
+        public static List<string> listServicesWithoutPerfCounters = new List<string>();
 
         public static bool ServicesOnMachine()
         {

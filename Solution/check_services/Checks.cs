@@ -35,8 +35,11 @@ namespace check_services
                 return (int)ServiceState.ServiceUnknown;
 
             // Time since bootup
-            if (GetUpTime() < Settings.iDelayedGraceDuration)
-                bDelayedGracePeriod = true;
+            if (Settings.iDelayedGraceDuration != 0 || Settings.bDoPerfCounters)
+                PerfData.PopulateCounterMaps();
+
+            if (Settings.iDelayedGraceDuration != 0 && PerfData.GetUpTime() < Settings.iDelayedGraceDuration)
+                    bDelayedGracePeriod = true;
 
             if (Settings.bDoHideCategoryFromOuput == false && Settings.Categories.Length >= 2)
                 bIncludeCategoryInOutput = true;
@@ -61,6 +64,9 @@ namespace check_services
                     PerfData.ServiceStatusCounting(ActualService.CurrentStatus);
                     Program.listServicePerfCounters.Add(ActualService.ServiceName);
                     PerfData.iNumberOfServices++;
+                    if (Settings.bDoPerfCounters)
+                        temp = PerfData.GetPerformanceCounterByServiceName(ActualService.ServiceName);
+
                     bMatchedService = true;
                     break;
                 }
@@ -80,6 +86,8 @@ namespace check_services
                     PerfData.ServiceStatusCounting(ActualService.CurrentStatus);
                     Program.listServicePerfCounters.Add(ActualService.ServiceName);
                     PerfData.iNumberOfServices++;
+                    if (Settings.bDoPerfCounters)
+                        temp = PerfData.GetPerformanceCounterByServiceName(ActualService.ServiceName);
                     bMatchedService = true;
                     continue;
                 }
@@ -90,6 +98,8 @@ namespace check_services
                     PerfData.ServiceStatusCounting(ActualService.CurrentStatus);
                     Program.listServicePerfCounters.Add(ActualService.ServiceName);
                     PerfData.iNumberOfServices++;
+                    if (Settings.bDoPerfCounters)
+                        temp = PerfData.GetPerformanceCounterByServiceName(ActualService.ServiceName);
                     bMatchedService = true;
                     continue;
                 }
@@ -106,6 +116,8 @@ namespace check_services
                         PerfData.ServiceStatusCounting(ActualService.CurrentStatus);
                         Program.listServicePerfCounters.Add(ActualService.ServiceName);
                         PerfData.iNumberOfServices++;
+                        if (Settings.bDoPerfCounters)
+                            temp = PerfData.GetPerformanceCounterByServiceName(ActualService.ServiceName);
                         bMatchedService = true;
                         break;
                     }
@@ -120,6 +132,8 @@ namespace check_services
                     PerfData.ServiceStatusCounting(ActualService.CurrentStatus);
                     Program.listServicePerfCounters.Add(ActualService.ServiceName);
                     PerfData.iNumberOfServices++;
+                    if (Settings.bDoPerfCounters)
+                        temp = PerfData.GetPerformanceCounterByServiceName(ActualService.ServiceName);
                     continue;
                 }
             }
@@ -300,13 +314,6 @@ namespace check_services
                 errorServices = true;
             }
             return returncode;
-        }
-
-        public static int GetUpTime()
-        {
-            PerformanceCounter pc = new PerformanceCounter("System", "System Up Time");
-            pc.NextValue();
-            return (int)pc.NextValue();
         }
     }
 }
