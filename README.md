@@ -20,14 +20,14 @@ This executable assumes the following:
 ## Usage:
 
 	Usage: check_services.exe [OPTIONS]
-	Version: 0.10.5694.30022
+	Version: 0.11.6172.41529
 	This plugin checks the State of one or more services on the local machine.
 	You can filter for your services by using category or a combination of category and include/exclude filters.
 	Use the same switch multiple times if you want to combine or exclude multiple categories or services
-	
+
 	Options:
 	  -i, --inventory            Provide the inventory
-	  -c, --check-services       Check the health status of the local services
+	  -c, --check-service        Check the health status of the local services
 		  --category=VALUE       Category to check or provide inventory from,
 								   default is ThirdParty
 		  --excluded-svc=VALUE   Exclude this service
@@ -37,17 +37,20 @@ This executable assumes the following:
 		  --warn-on-category=VALUE
 								 Warn on the specified category. Default is
 								   Supporting
+		  --allow-empty-result   Allow an empty result set. Useful when ThirdParty
+								   category is specified.
 		  --inv-format=VALUE     Inventory output format, default is readable,
 								   available are csv,readable,i2conf
 		  --inv-level=VALUE      Inventory level, normal or full
 		  --inv-all-running      Inventory only the running services
 		  --inv-hide-empty       Hide empty vars from inventory output.
-		  --single-check         Specifies that only one Service is to be checked,
-								   simplifies output of perfdata and perfcounters
+		  --single-service       Specifies that only one Service is to be checked,
+								   simplifies output of perfdata and optional
+								   perfcounters
 		  --expected-state=VALUE Set the expected state for the service, used
 								   primarily with --single-service option
-		  --split-by=VALUE       Alternative character to split input options
-								   VALUE with
+		  --split-by=VALUE       Alternative character to split input options VALUE
+								   with. Default is ','
 		  --check-all-starttypes Check all StartTypes against specified Category,
 								   not only Automatic
 		  --perfcounter          Extra performance counters, use with caution
@@ -59,8 +62,8 @@ This executable assumes the following:
 								   check-service command
 		  --svc-in-sys-category=VALUE
 								 Set category of specified service to System
-		  --svc-in-ess-category=VALUE
-								 Set category of specified service to Essential
+		  --svc-in-man-category=VALUE
+								 Set category of specified service to Managed
 		  --svc-in-role-category=VALUE
 								 Set category of specified service to Role
 		  --svc-in-3rd-category=VALUE
@@ -109,8 +112,8 @@ The file check_services.conf contains this example, just uncomment it in the fil
 
 Uncomment the "Monitor System Category Services" example inside the "check_services.conf" you copied earlier
 
-#### Monitor Essential Category Services
-Uncomment the "Monitor Essential Category Services" example inside the "check_services.conf" you copied earlier
+#### Monitor Managed Category Services
+Uncomment the "Monitor Managed Category Services" example inside the "check_services.conf" you copied earlier
 
 #### Monitor Role Category Services
 Uncomment the "Monitor Role Category Services" example inside the "check_services.conf" you copied earlier
@@ -137,13 +140,13 @@ Monitor System Services
 
 	check_services.exe --check-service --category System
 
-Monitor System, Essential and Role Services
+Monitor System, Managed and Role Services
 
-	check_services.exe --check-service --category System Role Essential
+	check_services.exe --check-service --category System Role Managed
 
-Monitor Essential Services, exclude service gpsvc (Group Policy Client)
+Monitor Managed Services, exclude service gpsvc (Group Policy Client)
 
-	check_services.exe --check-service --category Essential --excluded-svc gpsvc
+	check_services.exe --check-service --category Managed --excluded-svc gpsvc
 
 Monitor only specified services
 
@@ -153,17 +156,17 @@ Monitor all services in the category, even those not set to Automatic
 
 	check_services.exe --check-service --category Supporting --check-all-starttypes
 
-Monitor categories System, Essential and ThirdParty, hide categories from output when there are multiple categories specified as a parameter
+Monitor categories System, Managed and ThirdParty, hide categories from output when there are multiple categories specified as a parameter
 
-	check_services.exe --check-service --category System --category Essential --category ThirdParty --hide-category
+	check_services.exe --check-service --category System --category Managed --category ThirdParty --hide-category
 	
-Monitor categories System, Essential and Supporting, warn if it is incorrect in Essential and Supporting
+Monitor categories System, Managed and Supporting, warn if it is incorrect in Managed and Supporting
 
-	check_services.exe --check-service --category System --category Essential --category Supporting --warn-on-category Essential --warn-on-category Supporting
+	check_services.exe --check-service --category System --category Managed --category Supporting --warn-on-category Managed --warn-on-category Supporting
 	
 Monitor with categories from CSV file:
 
-	check_services.exe --check-service --category System Essential ThirdParty --category-file "C:\temp\ServiceDefinitions.csv" --file-format CSV
+	check_services.exe --check-service --category System Managed ThirdParty --category-file "C:\temp\ServiceDefinitions.csv" --file-format CSV
 
 Monitor category ThirdParty with 180 second gracetime for Services that are of type Automatic (Delayed) to be started after bootup
 
@@ -173,9 +176,9 @@ Monitor single service with expected state set
 
 	check_services.exe --check-service --single-service --expected-state "Running" --included-svc "RpcSs"
 	
-Monitor categories System, Essential, Supporting and Role, set service CcmExec to category Supporting
+Monitor categories System, Managed, Supporting and Role, set service CcmExec to category Supporting
 
-	check_services.exe --check-service --category System --category Essential --category Supporting --category Role --svc-in-sup-category CcmExec
+	check_services.exe --check-service --category System --category Managed --category Supporting --category Role --svc-in-sup-category CcmExec
 	
 
 
@@ -309,9 +312,9 @@ ToDo
 				value = "$svc_in_sys_category$"
 				description = "Set category of specified service to System"
 			}
-			"--svc-in-ess-category" = {
-				value = "$svc_in_ess_category$"
-				description = "Set category of specified service to Essential"
+			"--svc-in-man-category" = {
+				value = "$svc_in_man_category$"
+				description = "Set category of specified service to Managed"
 			}
 			"--svc-in-role-category" = {
 				value = "$svc_in_role_category$"
@@ -343,6 +346,10 @@ ToDo
 				set_if = "$svc_verbose$"
 				description = "Switch to use when trying to figure out why a service is not included, excluded or similarly when the returned output is not as expected"
 			}
+			"--allow-empty-result" = {
+				set_if = "$svc_allow_empty_result$"	
+				description = "Allow an empty result set. Useful when ThirdParty category is specified"
+			}
 			
 		}
 		//vars.svc_inventory = false
@@ -366,7 +373,7 @@ ToDo
 		//vars.svc_hide_long_output = false
 		//vars.svc_hide_category = false
 		//vars.svc_in_sys_category = ""
-		//vars.svc_in_ess_category = ""
+		//vars.svc_in_man_category = ""
 		//vars.svc_in_role_category = ""
 		//vars.svc_in_sup_category = ""
 		//vars.svc_in_3rd_category = ""
@@ -375,6 +382,7 @@ ToDo
 		//vars.svc_file_format = "CSV"
 		//vars.svc_category_file = ""
 		//vars.svc_verbose = false	
+		//vars.svc_allow_empty_result = false
 	}
 
 #### Apply Rules
@@ -418,7 +426,7 @@ Monitor all services in the ThirdParty category, excluding gupdate
 		assign where host.name == NodeName
 	}
 
-Monitor all services in the System, Essential, Role and Supporting category by specifying the predefined group category "Basic" and hide long output
+Monitor all services in the System, Managed, Role and Supporting category by specifying the predefined group category "Basic" and hide long output
 
 	apply Service "WinSvcs - Basic" {
 		import "generic-service"
@@ -431,7 +439,7 @@ Monitor all services in the System, Essential, Role and Supporting category by s
 		assign where host.name == NodeName
 	}
 
-Monitor all services in the System, Essential and Role categories, hide long output. 
+Monitor all services in the System, Managed and Role categories, hide long output. 
 
 	apply Service "WinSvcs - Core" {
 		import "generic-service"
@@ -439,7 +447,7 @@ Monitor all services in the System, Essential and Role categories, hide long out
 		check_command = "check_services"
 		
 		vars.svc_check = true
-		vars.svc_category = [ "System", "Essential" ,"Role" ]
+		vars.svc_category = [ "System", "Managed" ,"Role" ]
 		vars.svc_hide_long_output = true
 		assign where host.name == NodeName
 	}
@@ -459,28 +467,28 @@ The Default ServiceDefinitions in the CSV format below are included in the plugi
 ### Default ServiceDefinitions, CSV format
 ServiceName | DisplayName | ServiceCategory | StartType | ExpectedStatus
 ------------|-------------|-----------------|-----------|----------------
-BITS | Background Intelligent Transfer Service | Essential | Automatic | Running
-COMSysApp | COM+ System Application | Essential | Automatic | Running
-Dnscache | DNS Client | Essential | Automatic | Running
-DPS | Diagnostic Policy Service | Essential | Automatic | Running
-EventLog | Windows Event Log | Essential | Automatic | Running
-EventSystem | COM+ Event System | Essential | Automatic | Running
-iphlpsvc | IP Helper | Essential | Automatic | Running
-LanmanServer | Server | Essential | Automatic | Running
-LanmanWorkstation | Workstation | Essential | Automatic | Running
-MpsSvc | Windows Firewall | Essential | Automatic | Running
-Netlogon | Netlogon | Essential | Automatic | Running
-pla | Performance Logs & Alerts | Essential | Automatic | Running
-ProfSvc | User Profile Service | Essential | Automatic | Running
-RpcEptMapper | RPC Endpoint Mapper | Essential | Automatic | Running
-RpcSs | Remote Procedure Call (RPC) | Essential | Automatic | Running
-UALSVC | User Access Logging Service | Essential | Automatic | Running
-vmicheartbeat | Hyper-V Heartbeat Service | Essential | Automatic | Running
-vmicshutdown | Hyper-V Guest Shutdown Service | Essential | Automatic | Running
-vmictimesync | Hyper-V Time Synchronization Service | Essential | Automatic | Running
-VMTools | VMware Tools | Essential | Automatic | Running
-Winmgmt | Windows Management Instrumentation | Essential | Automatic | Running
-WinRM | Windows Remote Management (WS-Management) | Essential | Automatic | Running
+BITS | Background Intelligent Transfer Service | Managed | Automatic | Running
+COMSysApp | COM+ System Application | Managed | Automatic | Running
+Dnscache | DNS Client | Managed | Automatic | Running
+DPS | Diagnostic Policy Service | Managed | Automatic | Running
+EventLog | Windows Event Log | Managed | Automatic | Running
+EventSystem | COM+ Event System | Managed | Automatic | Running
+iphlpsvc | IP Helper | Managed | Automatic | Running
+LanmanServer | Server | Managed | Automatic | Running
+LanmanWorkstation | Workstation | Managed | Automatic | Running
+MpsSvc | Windows Firewall | Managed | Automatic | Running
+Netlogon | Netlogon | Managed | Automatic | Running
+pla | Performance Logs & Alerts | Managed | Automatic | Running
+ProfSvc | User Profile Service | Managed | Automatic | Running
+RpcEptMapper | RPC Endpoint Mapper | Managed | Automatic | Running
+RpcSs | Remote Procedure Call (RPC) | Managed | Automatic | Running
+UALSVC | User Access Logging Service | Managed | Automatic | Running
+vmicheartbeat | Hyper-V Heartbeat Service | Managed | Automatic | Running
+vmicshutdown | Hyper-V Guest Shutdown Service | Managed | Automatic | Running
+vmictimesync | Hyper-V Time Synchronization Service | Managed | Automatic | Running
+VMTools | VMware Tools | Managed | Automatic | Running
+Winmgmt | Windows Management Instrumentation | Managed | Automatic | Running
+WinRM | Windows Remote Management (WS-Management) | Managed | Automatic | Running
 ALG | Application Layer Gateway Service | Ignored | Automatic | Running
 AppReadiness | App Readiness | Ignored | Automatic | Running
 AppXSvc | AppX Deployment Service (AppXSVC) | Ignored | Automatic | Running
