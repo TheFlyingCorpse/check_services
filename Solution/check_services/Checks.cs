@@ -39,7 +39,7 @@ namespace check_services
                 PerfData.PopulateCounterMaps();
 
             if (Settings.iDelayedGraceDuration != 0 && PerfData.GetUpTime() < Settings.iDelayedGraceDuration)
-                    bDelayedGracePeriod = true;
+                bDelayedGracePeriod = true;
 
             if (Settings.bDoHideCategoryFromOuput == false && Settings.Categories.Length >= 2)
                 bIncludeCategoryInOutput = true;
@@ -136,14 +136,34 @@ namespace check_services
                         temp = PerfData.GetPerformanceCounterByServiceName(ActualService.ServiceName);
                     continue;
                 }
+
+                // If match for the Category and it is a service that starts Manually when the switch bDoCheckAllStartTypes is set.
+                if (Settings.Categories.Contains(ActualService.ServiceCategory) && ActualService.StartType == ServiceStartMode.Manual.ToString() && Settings.bDoCheckAllStartTypes)
+                {
+                    returncode = CheckCategories(returncode, ActualService, bDelayedGracePeriod, bIncludeCategoryInOutput, bWarningForServiceCategory);
+                    PerfData.ServiceStatusCounting(ActualService.CurrentStatus);
+                    Program.listServicePerfCounters.Add(ActualService.ServiceName);
+                    PerfData.iNumberOfServices++;
+                    if (Settings.bDoPerfCounters)
+                        temp = PerfData.GetPerformanceCounterByServiceName(ActualService.ServiceName);
+                    continue;
+                }
             }
 
             if (errorServices == false)
             {
                 if (PerfData.iNumberOfServices == 0)
                 {
-                    outputServices = "No Services matched the filters given, or none exist on this server.";
-                    returncode = (int)ServiceState.ServiceUnknown;
+                    if (Settings.bAllowEmptyResult)
+                    {
+                        outputServices = "No Services matched the filters given.";
+                        returncode = (int)ServiceState.ServiceOK;
+                    }
+                    else
+                    {
+                        outputServices = "No Services matched the filters given, or none exist on this server.";
+                        returncode = (int)ServiceState.ServiceUnknown;
+                    }
                 }
                 else if (PerfData.iNumberOfServices == 1)
                 {

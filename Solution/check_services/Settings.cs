@@ -17,6 +17,7 @@
         public static bool bDoSingleCheck;
         public static bool bDoPerfCounters;
         public static bool bAllowGraceStartup;
+        public static bool bAllowEmptyResult;
 
         public static string[] ExcludedServices = new string[] { "thisshouldprobablyneverbeoverwrittenbysomething" };
         public static string[] IncludedServices = new string[] { "thisshouldprobablyneverbeoverwrittenbysomething" };
@@ -24,6 +25,7 @@
         public static string[] RunningServices = new string[] { "thisshouldprobablyneverbeoverwrittenbysomething" };
         public static string[] Categories = new string[] { "thisshouldprobablyneverbeoverwrittenbysomething" };
         public static string[] WarnCategories = new string[] { "thisshouldprobablyneverbeoverwrittenbysomething" };
+        public static string[] AllowEmptyCategories = new string[] { "thisshouldprobablyneverbeoverwrittenbysomething" };
 
         public static bool bDefaultIncludeList = true;
         public static bool bDefaultExcludeList = true;
@@ -33,14 +35,14 @@
         public static bool bDefaultCategoriesList = true;
 
         public static string[] services_in_system_category = new string[] { "thisshouldprobablyneverbeoverwrittenbysomething" };
-        public static string[] services_in_essential_category = new string[] { "thisshouldprobablyneverbeoverwrittenbysomething" };
+        public static string[] services_in_managed_category = new string[] { "thisshouldprobablyneverbeoverwrittenbysomething" };
         public static string[] services_in_role_category = new string[] { "thisshouldprobablyneverbeoverwrittenbysomething" };
         public static string[] services_in_supporting_category = new string[] { "thisshouldprobablyneverbeoverwrittenbysomething" };
         public static string[] services_in_thirdparty_category = new string[] { "thisshouldprobablyneverbeoverwrittenbysomething" };
         public static string[] services_in_ignored_category = new string[] { "thisshouldprobablyneverbeoverwrittenbysomething" };
 
         public static bool bDefaultSystemCategory = true;
-        public static bool bDefaultEssentialCategory = true;
+        public static bool bDefaultManagedCategory = true;
         public static bool bDefaultRoleCategory = true;
         public static bool bDefaultSupportingCategory = true;
         public static bool bDefaultThirdPartyCategory = true;

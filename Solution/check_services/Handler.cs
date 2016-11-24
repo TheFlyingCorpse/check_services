@@ -19,7 +19,7 @@ namespace check_services
             List<string> temp_warn_categories = new List<string>();
 
             List<string> temp_services_in_system_category = new List<string>();
-            List<string> temp_services_in_essential_category = new List<string>();
+            List<string> temp_services_in_managed_category = new List<string>();
             List<string> temp_services_in_role_category = new List<string>();
             List<string> temp_services_in_supporting_category = new List<string>();
             List<string> temp_services_in_thirdparty_category = new List<string>();
@@ -43,6 +43,8 @@ namespace check_services
                     v => temp_running_services.Add (v)},
                 { "warn-on-category=", "Warn on the specified category. Default is Supporting",
                     v => temp_warn_categories.Add (v)},
+                { "allow-empty-result", "Allow an empty result set. Useful when ThirdParty category is specified. ThirdParty",
+                    v => { Settings.bAllowEmptyResult = (v != null); } },
                 { "inv-format=", "Inventory output format, default is readable, available are csv,readable,i2conf",
                     v => Settings.strInventoryFormat = v },
                 { "inv-level=", "Inventory level, normal or full",
@@ -70,7 +72,7 @@ namespace check_services
                 { "svc-in-sys-category=", "Set category of specified service to System",
                     v => temp_services_in_system_category.Add (v)},
                 { "svc-in-ess-category=", "Set category of specified service to Essential",
-                    v => temp_services_in_essential_category.Add (v)},
+                    v => temp_services_in_managed_category.Add (v)},
                 { "svc-in-role-category=", "Set category of specified service to Role",
                     v => temp_services_in_role_category.Add (v)},
                 { "svc-in-3rd-category=", "Set category of specified service to ThirdParty",
@@ -118,13 +120,13 @@ namespace check_services
 
             // Handle Arguments
             returncode = Handler.HandleArguments(returncode, temp_excluded_services, temp_included_services, temp_stopped_services, temp_running_services, temp_categories, temp_warn_categories, temp_services_in_system_category,
-                temp_services_in_essential_category, temp_services_in_role_category, temp_services_in_supporting_category, temp_services_in_thirdparty_category, temp_services_in_ignored_category);
+                temp_services_in_managed_category, temp_services_in_role_category, temp_services_in_supporting_category, temp_services_in_thirdparty_category, temp_services_in_ignored_category);
 
             return returncode;
         }
 
         public static int HandleArguments(int returncode, List<string> temp_excluded_services, List<string> temp_included_services, List<string> temp_stopped_services, List<string> temp_running_services,
-            List<string> temp_categories, List<string> temp_warn_categories, List<string> temp_services_in_system_category, List<string> temp_services_in_essential_category,
+            List<string> temp_categories, List<string> temp_warn_categories, List<string> temp_services_in_system_category, List<string> temp_services_in_managed_category,
             List<string> temp_services_in_role_category, List<string> temp_services_in_supporting_category, List<string> temp_services_in_thirdparty_category, List<string> temp_services_in_ignored_category)
         {
             if (temp_excluded_services.Count > 0)
@@ -184,11 +186,11 @@ namespace check_services
                 PrintArray("services_in_system_category", Settings.services_in_system_category);
                 Settings.bDefaultSystemCategory = false;
             }
-            if (temp_services_in_essential_category.Count > 0)
+            if (temp_services_in_managed_category.Count > 0)
             {
-                Settings.services_in_essential_category = SplitList(temp_services_in_essential_category);
-                PrintArray("services_in_essential_category", Settings.services_in_essential_category);
-                Settings.bDefaultEssentialCategory = false;
+                Settings.services_in_managed_category = SplitList(temp_services_in_managed_category);
+                PrintArray("services_in_essential_category", Settings.services_in_managed_category);
+                Settings.bDefaultManagedCategory = false;
             }
             if (temp_services_in_role_category.Count > 0)
             {
