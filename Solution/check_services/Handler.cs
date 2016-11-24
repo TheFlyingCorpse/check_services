@@ -43,7 +43,7 @@ namespace check_services
                     v => temp_running_services.Add (v)},
                 { "warn-on-category=", "Warn on the specified category. Default is Supporting",
                     v => temp_warn_categories.Add (v)},
-                { "allow-empty-result", "Allow an empty result set. Useful when ThirdParty category is specified. ThirdParty",
+                { "allow-empty-result", "Allow an empty result set. Useful when ThirdParty category is specified.",
                     v => { Settings.bAllowEmptyResult = (v != null); } },
                 { "inv-format=", "Inventory output format, default is readable, available are csv,readable,i2conf",
                     v => Settings.strInventoryFormat = v },
@@ -71,7 +71,7 @@ namespace check_services
                     v => { Settings.bDoHideCategoryFromOuput = (v != null); } },
                 { "svc-in-sys-category=", "Set category of specified service to System",
                     v => temp_services_in_system_category.Add (v)},
-                { "svc-in-ess-category=", "Set category of specified service to Essential",
+                { "svc-in-man-category=", "Set category of specified service to Managed",
                     v => temp_services_in_managed_category.Add (v)},
                 { "svc-in-role-category=", "Set category of specified service to Role",
                     v => temp_services_in_role_category.Add (v)},
@@ -189,7 +189,7 @@ namespace check_services
             if (temp_services_in_managed_category.Count > 0)
             {
                 Settings.services_in_managed_category = SplitList(temp_services_in_managed_category);
-                PrintArray("services_in_essential_category", Settings.services_in_managed_category);
+                PrintArray("services_in_managed_category", Settings.services_in_managed_category);
                 Settings.bDefaultManagedCategory = false;
             }
             if (temp_services_in_role_category.Count > 0)
@@ -236,8 +236,8 @@ namespace check_services
             else if (Settings.Categories.Contains("Basic"))
             {
                 if (Settings.bVerbose)
-                    Console.WriteLine("INFO: Categories set to Basic, inserting System, Essential, Supporting and Role categories to check for.");
-                Settings.Categories = new string[] { "Essential", "System", "Supporting", "Role" };
+                    Console.WriteLine("INFO: Categories set to Basic, inserting System, Managed, Supporting and Role categories to check for.");
+                Settings.Categories = new string[] { "Managed", "System", "Supporting", "Role" };
             }
             else
             {
