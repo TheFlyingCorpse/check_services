@@ -20,7 +20,7 @@ This executable assumes the following:
 ## Usage:
 
 	Usage: check_services.exe [OPTIONS]
-	Version: 0.11.6172.41529
+	Version: 0.20.6172.42013
 	This plugin checks the State of one or more services on the local machine.
 	You can filter for your services by using category or a combination of category and include/exclude filters.
 	Use the same switch multiple times if you want to combine or exclude multiple categories or services
