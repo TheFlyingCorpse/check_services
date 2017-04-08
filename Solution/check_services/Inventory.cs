@@ -99,7 +99,7 @@ namespace check_services
                             Console.WriteLine("DEBUG: Service '" + sServiceName + "' matching category '" + strCategory + "'");
                         }
                     }
-                    else if (Settings.bDefaultCategoriesList == false && Settings.bDoSingleCheck == false)
+                    else if (Settings.bDoSingleCheck == false)
                     {
                         if (Settings.bVerbose)
                             Console.WriteLine("INFO: Skipping service due to category not matched: " + sServiceName);
@@ -364,6 +364,7 @@ namespace check_services
             listWinServicesFromDefinition.Add(new WinServiceDefined("BITS", "Background Intelligent Transfer Service", "System", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("BrokerInfrastructure", "Background Tasks Infrastructure Service", "System", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("COMSysApp", "COM+ System Application", "System", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("CoreMessagingRegistrar", "CoreMessaging", "System", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("DcomLaunch", "DCOM Server Process Launcher", "System", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("EventLog", "Windows Event Log", "System", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("EventSystem", "COM+ Event System", "System", "Automatic", "Running"));
@@ -381,6 +382,7 @@ namespace check_services
             listWinServicesFromDefinition.Add(new WinServiceDefined("WinDefend", "Windows Defender Service", "System", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("WinRM", "Windows Remote Management (WS-Management)", "System", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("Winmgmt", "Windows Management Instrumentation", "System", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("WLMS", "Windows Licensing Monitoring Service", "System", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("eventlog", "Windows Event Log", "System", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("iphlpsvc", "IP Helper", "System", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("pla", "Performance Logs & Alerts", "System", "Automatic", "Running"));
@@ -471,6 +473,7 @@ namespace check_services
             listWinServicesFromDefinition.Add(new WinServiceDefined("WinTarget", "Microsoft iSCSI Software Target", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("WsusService", "WSUS Service", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("adfssrv", "Active Directory Federation Services", "Role", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("appproxysvc", "Web Application Proxy Service", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("c2wts", "Claims to Windows Token Service", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("ddpsvc", "Data Deduplication Service", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("ddpvssvc", "Data Deduplication Volume Shadow Copy Service", "Role", "Automatic", "Running"));
@@ -498,6 +501,7 @@ namespace check_services
             listWinServicesFromDefinition.Add(new WinServiceDefined("AxInstSV", "ActiveX Installer (AxInstSV)", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("BDESVC", "BitLocker Drive Encryption Service", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("Browser", "Computer Browser", "Supporting", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("CDPSvc", "Connected Devices Platform Service", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("CertPropSvc", "Certificate Propagation", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("CryptSvc", "Cryptographic Services", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("CscService", "Offline Files", "Supporting", "Automatic", "Running"));
@@ -505,15 +509,19 @@ namespace check_services
             listWinServicesFromDefinition.Add(new WinServiceDefined("DeviceAssociationService", "Device Association Service", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("DeviceInstall", "Device Install Service", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("Dhcp", "DHCP Client", "Supporting", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("DoSvc", "Delivery Optimization", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("DiagTrack", "Diagnostics Tracking Service", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("FontCache", "Windows Font Cache Service", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("FontCache3.0.0.0", "Windows Font Cache Service 3.0", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("IEEtwCollectorService", "Internet Explorer ETW Collector Service", "Supporting", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("IpOverUsbSvc", "Windows Phone IP over USB Transport (IpOverUsbSvc)", "Supporting", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("MapsBroker", "Downloaded Maps Manager", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("MMCSS", "Multimedia Class Scheduler", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("NcaSvc", "Network Connectivity Assistant", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("NcbService", "Network Connection Broker", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("Netman", "Network Connections", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("NlaSvc", "Network Location Awareness", "Supporting", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("PcaSvc", "Program Compatibility Assistant Service", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("PerfHost", "Performance Counter DLL Host", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("PlugPlay", "Plug and Play", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("PolicyAgent", "IPsec Policy Agent", "Supporting", "Automatic", "Running"));
@@ -531,12 +539,14 @@ namespace check_services
             listWinServicesFromDefinition.Add(new WinServiceDefined("SystemEventsBroker", "System Events Broker", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("TBS", "TPM Base System", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("Themes", "Themes", "Supporting", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("tiledatamodelsvc", "Tile Data model server", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("UALSVC", "User Access Logging Service", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("UI0Detect", "Interactive Services Detection", "Supporting", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("UserManager", "User Manager", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("UxSms", "Desktop Window Manager Session Manager", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("VaultSvc", "Credential Manager", "Supporting", "Automatic", "Running"));
-            listWinServicesFromDefinition.Add(new WinServiceDefined("W32Time", "Windows Time", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("WPDBusEnum", "Portable Device Enumerator Service", "Supporting", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("WpnService", "Windows Push Notifications System Service", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("WSService", "Windows Store Service (WSService)", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("WSearch", "Windows Search", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("Wcmsvc", "Windows Connection Manager", "Supporting", "Automatic", "Running"));
@@ -570,6 +580,8 @@ namespace check_services
             listWinServicesFromDefinition.Add(new WinServiceDefined("wudfsvc", "Windows Driver Foundation - User-mode Driver Framework", "Supporting", "Automatic", "Running"));
 
             // Managed services
+            listWinServicesFromDefinition.Add(new WinServiceDefined("ATAGateway", "Microsoft Advanced Threat Analytics Gateway", "Managed", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("ATAGatewayUpdater", "Microosft Advanced Threat Analytics Gateway Updater", "Managed", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("CIMnotify", "HP Insight Event Notifier", "Managed", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("CcmExec", "SMS Agent Host", "Managed", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("Cissesrv", "HP Smart Array SAS/SATA Event Notification Service", "Managed", "Automatic", "Running"));
@@ -598,6 +610,7 @@ namespace check_services
             listWinServicesFromDefinition.Add(new WinServiceDefined("VMTools", "VMware Tools", "Managed", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("VMware Physical Disk Helper Service", "VMware Physical Disk Helper Service", "Managed", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("VRTSpbx", "Symantec Private Branch Exchange", "Managed", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("W32Time", "Windows Time", "Managed", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("ccmsetup", "ccmsetup", "Managed", "Automatic", "Stopped"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("cpqvcagent", "HP Version Control Agent", "Managed", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("hpqams", "HP ProLiant Agentless Management Service", "Managed", "Automatic", "Running"));
@@ -605,9 +618,12 @@ namespace check_services
             listWinServicesFromDefinition.Add(new WinServiceDefined("ietsms", "Intel Ethernet thermal Sensor Monitor Service", "Managed", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("mcollective", "Marionette Collective Server", "Managed", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("mtstrmd", "NetBackup Deduplication Multi-Threaded Agent", "Managed", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("nscp", "NSClient++", "Managed", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("nxlog", "nxlog", "Managed", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("puppet", "Puppet Agent", "Managed", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("pxp-agent", "Puppet PXP Agent", "Managed", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("ssh-agent", "ssh-agent", "Managed", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("sshd", "sshd", "Managed", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("smstsmgr", "ConfigMgr Task Sequence Agent", "Managed", "Manual", "Stopped"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("sysdown", "HP Proliant System Shutdown Service", "Managed", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("telegraf", "Telegraf Data Collector Service", "Managed", "Automatic", "Running"));
