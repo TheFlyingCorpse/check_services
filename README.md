@@ -471,6 +471,7 @@ BFE | Base Filtering Engine | System | Automatic | Running
 BITS | Background Intelligent Transfer Service | System | Automatic | Running
 BrokerInfrastructure | Background Tasks Infrastructure Service | System | Automatic | Running
 COMSysApp | COM+ System Application | System | Automatic | Running
+CoreMessagingRegistrar | CoreMessaging | System | Automatic | Running
 DcomLaunch | DCOM Server Process Launcher | System | Automatic | Running
 EventLog | Windows Event Log | System | Automatic | Running
 EventSystem | COM+ Event System | System | Automatic | Running
@@ -488,6 +489,7 @@ Schedule | Task Scheduler | System | Automatic | Running
 WinDefend | Windows Defender Service | System | Automatic | Running
 WinRM | Windows Remote Management (WS-Management) | System | Automatic | Running
 Winmgmt | Windows Management Instrumentation | System | Automatic | Running
+WLMS | Windows Licensing Monitoring Service | System | Automatic | Running
 eventlog | Windows Event Log | System | Automatic | Running
 iphlpsvc | IP Helper | System | Automatic | Running
 pla | Performance Logs & Alerts | System | Automatic | Running
@@ -576,6 +578,7 @@ WiaRpc | Still Image Acquisition Events | Role | Automatic | Running
 WinTarget | Microsoft iSCSI Software Target | Role | Automatic | Running
 WsusService | WSUS Service | Role | Automatic | Running
 adfssrv | Active Directory Federation Services | Role | Automatic | Running
+appproxysvc | Web Application Proxy Service | Role | Automatic | Running
 c2wts | Claims to Windows Token Service | Role | Automatic | Running
 ddpsvc | Data Deduplication Service | Role | Automatic | Running
 ddpvssvc | Data Deduplication Volume Shadow Copy Service | Role | Automatic | Running
@@ -601,6 +604,7 @@ Audiosrv | Windows Audio | Supporting | Automatic | Running
 AxInstSV | ActiveX Installer (AxInstSV) | Supporting | Automatic | Running
 BDESVC | BitLocker Drive Encryption Service | Supporting | Automatic | Running
 Browser | Computer Browser | Supporting | Automatic | Running
+CDPSvc | Connected Devices Platform Service | Supporting | Automatic | Running
 CertPropSvc | Certificate Propagation | Supporting | Automatic | Running
 CryptSvc | Cryptographic Services | Supporting | Automatic | Running
 CscService | Offline Files | Supporting | Automatic | Running
@@ -609,14 +613,17 @@ DeviceAssociationService | Device Association Service | Supporting | Automatic |
 DeviceInstall | Device Install Service | Supporting | Automatic | Running
 Dhcp | DHCP Client | Supporting | Automatic | Running
 DiagTrack | Diagnostics Tracking Service | Supporting | Automatic | Running
+DoSvc | Delivery Optimization | Supporting | Automatic | Running
 FontCache | Windows Font Cache Service | Supporting | Automatic | Running
 FontCache3.0.0.0 | Windows Font Cache Service 3.0 | Supporting | Automatic | Running
 IEEtwCollectorService | Internet Explorer ETW Collector Service | Supporting | Automatic | Running
+MapsBroker | Downloaded Maps Manager | Supporting | Automatic | Running
 MMCSS | Multimedia Class Scheduler | Supporting | Automatic | Running
 NcaSvc | Network Connectivity Assistant | Supporting | Automatic | Running
 NcbService | Network Connection Broker | Supporting | Automatic | Running
 Netman | Network Connections | Supporting | Automatic | Running
 NlaSvc | Network Location Awareness | Supporting | Automatic | Running
+PcaSvc | Program Compatibility Assistant Service | Supporting | Automatic | Running
 PerfHost | Performance Counter DLL Host | Supporting | Automatic | Running
 PlugPlay | Plug and Play | Supporting | Automatic | Running
 PolicyAgent | IPsec Policy Agent | Supporting | Automatic | Running
@@ -634,12 +641,14 @@ Spooler | Print Spooler | Supporting | Automatic | Running
 SystemEventsBroker | System Events Broker | Supporting | Automatic | Running
 TBS | TPM Base System | Supporting | Automatic | Running
 Themes | Themes | Supporting | Automatic | Running
+tiledatamodelsvc | Tile Data model server | Supporting | Automatic | Running
 UALSVC | User Access Logging Service | Supporting | Automatic | Running
 UI0Detect | Interactive Services Detection | Supporting | Automatic | Running
+UserManager | User Manager | Supporting | Automatic | Running
 UxSms | Desktop Window Manager Session Manager | Supporting | Automatic | Running
 VaultSvc | Credential Manager | Supporting | Automatic | Running
-W32Time | Windows Time | Supporting | Automatic | Running
 WPDBusEnum | Portable Device Enumerator Service | Supporting | Automatic | Running
+WpnService | Windows Push Notifications System Service | Supporting | Automatic | Running
 WSService | Windows Store Service (WSService) | Supporting | Automatic | Running
 WSearch | Windows Search | Supporting | Automatic | Running
 Wcmsvc | Windows Connection Manager | Supporting | Automatic | Running
@@ -671,6 +680,8 @@ wlidsvc | Microsoft Account Sign-in Assistant | Supporting | Automatic | Running
 wmiApSrv | WMI Performance Adapter | Supporting | Automatic | Running
 wuauserv | Windows Update | Supporting | Automatic | Running
 wudfsvc | Windows Driver Foundation - User-mode Driver Framework | Supporting | Automatic | Running
+ATAGateway | Microsoft Advanced Threat Analytics Gateway | Managed | Automatic | Running
+ATAGatewayUpdater | Microsoft Advanced Threat Analytics Gateway Updater | Managed | Automatic | Running
 CIMnotify | HP Insight Event Notifier | Managed | Automatic | Running
 CcmExec | SMS Agent Host | Managed | Automatic | Running
 Cissesrv | HP Smart Array SAS/SATA Event Notification Service | Managed | Automatic | Running
@@ -688,6 +699,7 @@ NetBackup Legacy Client Service | NetBackup Legacy Client Service | Managed | Au
 NetBackup Legacy Network Service | NetBackup Legacy Network Service | Managed | Automatic | Running
 NetBackup Proxy Service | NetBackup Proxy Service | Managed | Automatic | Running
 NetBackup SAN Client Fibre Transport Service | NetBackup SAN Client Fibre Transport Service | Managed | Automatic | Started
+nscp | NSClient++ | Managed | Automatic | Started
 ProLiantMonitor | HP ProLiant Health Monitor Service | Managed | Automatic | Running
 SNAC | Symantec Network Access Control | Managed | Automatic | Running
 ScvmmGuestServiceV5 | Microsoft System Center 2012 Virtual Machine Manager Guest Agent R2 | Managed | Automatic | Running
@@ -699,6 +711,7 @@ VGAuthService | VMware Alias Manager and Ticket Service | Managed | Automatic | 
 VMTools | VMware Tools | Managed | Automatic | Running
 VMware Physical Disk Helper Service | VMware Physical Disk Helper Service | Managed | Automatic | Running
 VRTSpbx | Symantec Private Branch Exchange | Managed | Automatic | Running
+W32Time | Windows Time | Managed | Automatic | Running
 ccmsetup | ccmsetup | Managed | Automatic | Stopped
 cpqvcagent | HP Version Control Agent | Managed | Automatic | Running
 hpqams | HP ProLiant Agentless Management Service | Managed | Automatic | Running
@@ -709,6 +722,8 @@ mtstrmd | NetBackup Deduplication Multi-Threaded Agent | Managed | Automatic | R
 nxlog | nxlog | Managed | Automatic | Running
 puppet | Puppet Agent | Managed | Automatic | Running
 pxp-agent | Puppet PXP Agent | Managed | Automatic | Running
+ssh-agent | ssh-agent | Managed | Automatic | Running
+sshd | sshd | Managed | Automatic | Running
 smstsmgr | ConfigMgr Task Sequence Agent | Managed | Manual | Stopped
 sysdown | HP Proliant System Shutdown Service | Managed | Automatic | Running
 telegraf | Telegraf Data Collector Service | Managed | Automatic | Running
