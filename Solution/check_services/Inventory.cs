@@ -202,7 +202,7 @@ namespace check_services
                 foreach (var DefinedService in listOverDefinedServices)
                 {
                     var DefinedServiceValue = DefinedService.Value;
-                    if (DefinedServiceValue.ServiceName == serviceName)
+                    if (serviceName.StartsWith(DefinedServiceValue.ServiceName))
                     {
                         if (Settings.bDebug)
                             Console.WriteLine("DEBUG: Found service '" + serviceName + "' with service definition '" + DefinedServiceValue.ServiceCategory.ToString() + "'");
@@ -210,7 +210,7 @@ namespace check_services
                         return DefinedServiceValue.ServiceCategory.ToString();
                     }
                 }
-
+                
                 return "ThirdParty";
             }
             return "errorInServiceCategoryLookup";
