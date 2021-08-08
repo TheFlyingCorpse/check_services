@@ -116,17 +116,25 @@ namespace check_services
                     List<string> listDependentServices = new List<string>();
                     List<string> listServicesDependedOn = new List<string>();
 
-                    foreach (var DependentService in scService.DependentServices)
+                    try
                     {
-                        try
+                        foreach (var DependentService in scService.DependentServices)
                         {
-                            listDependentServices.Add(DependentService.ServiceName.ToString());
+                            try
+                            {
+                                listDependentServices.Add(DependentService.ServiceName.ToString());
+                            }
+                            catch (Exception e)
+                            {
+                                if (Settings.bVerbose || Settings.bDebug)
+                                    Console.WriteLine("ERROR: Looking up DependentService for '" + sServiceName + "' resulted in an exception, it is likely not installed:" + e);
+                            }
                         }
-                        catch (Exception e)
-                        {
-                            if (Settings.bVerbose || Settings.bDebug)
-                                Console.WriteLine("ERROR: Looking up DependentService for '" + sServiceName + "' resulted in an exception, it is likely not installed:" + e);
-                        }
+                    }
+                    catch (Exception e)
+                    {
+                        if (Settings.bVerbose || Settings.bDebug)
+                            Console.WriteLine("ERROR: Looking up DependentService for '" + sServiceName + "' resulted in an exception, it is likely to be a protected system service:" + e);
                     }
 
                     foreach (var ServiceDependedOn in scService.ServicesDependedOn)
