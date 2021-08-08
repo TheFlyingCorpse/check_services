@@ -683,6 +683,11 @@ namespace check_services
             listWinServicesFromDefinition.Add(new WinServiceDefined("upnphost", "UPnP Device Host", "Ignored", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("vmicvss", "Hyper-V Volume Shadow Copy Requestor", "Ignored", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("vmvss", "VMware Snapshot Provider", "Ignored", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("WaaSMedicSvc", "Windows Update Medic Service", "Ignored", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("XblAuthManager", "Xbox Live Auth Manager", "Ignored", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("XblGameSave", "Xbox Live Game Save", "Ignored", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("XboxGipSvc", "Xbox Accessory Management Service", "Ignored", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("XboxNetApiSvc", "Xbox Live Networking Service", "Ignored", "Automatic", "Running"));
 
             return true;
         }
