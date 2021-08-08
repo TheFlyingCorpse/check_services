@@ -676,6 +676,7 @@ namespace check_services
             listWinServicesFromDefinition.Add(new WinServiceDefined("clr_optimization_v4.0.30319_32", "Microsoft .NET Framework NGEN v4.​0.30319_​X86", "Ignored", "Automatic", "Stopped"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("clr_optimization_v4.0.30319_64", "Microsoft .NET Framework NGEN v4.​0.30319_​X64", "Ignored", "Automatic", "Stopped"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("dot3svc", "Wired AutoConfig", "Ignored", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("edgeupdate", "Microsoft Edge Update Service (edgeupdate)", "Ignored", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("gupdate", "Google-​update-service (gupdate)​", "Ignored", "Automatic", "Stopped"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("hidserv", "Human Interface Device Service", "Ignored", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("lltdsvc", "Link-Layer Topology Discovery Mapper", "Ignored", "Automatic", "Running"));
