@@ -396,12 +396,19 @@ namespace check_services
             listWinServicesFromDefinition.Add(new WinServiceDefined("DFSR", "DFS Replication", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("DNS", "DNS Server", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("Dfs", "DFS Namespace", "Role", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("DsRoleSvc", "DS Role Server", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("Eaphost", "Extensible Authentication Protocol", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("FDResPub", "Function Discovery Resource Publication", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("Fax", "Fax", "Role", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("FcSrv", "FcSrv", "Role", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("GatewayService", "Azure Gateway Service", "Role", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("GwHMSvc", "Gateway Health Monitoring Service", "Role", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("HgClientService", "Host Guardian Client Service", "Role", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("hns", "Host Network Service", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("IAS", "Network Policy Server", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("IISADMIN", "IIS Admin Service", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("IKEEXT", "IKE and AuthIP IPsec Keying Modules", "Role", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("Insights", "System Insights", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("IsmServ", "Intersite Messaging", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("KPSSVC", "KDC Proxy Server service (KPS)", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("Kdc", "Kerberos Key Distribution Center", "Role", "Automatic", "Running"));
@@ -409,6 +416,7 @@ namespace check_services
             listWinServicesFromDefinition.Add(new WinServiceDefined("KeyIso", "CNG Key Isolation", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("KtmRm", "KtmRm for Distributed Transaction Coordinator", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("LPDSVC", "LPD Service", "Role", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("LxssManager", "LxssManager", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("MSDTC", "Distributed Transaction Coordinator", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("MSMQ", "Message Queuing", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("MSMQTriggers", "Message Queuing Triggers", "Role", "Automatic", "Running"));
@@ -423,6 +431,7 @@ namespace check_services
             listWinServicesFromDefinition.Add(new WinServiceDefined("NetTcpPortSharing", "Net.Tcp Port Sharing Service", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("NfsService", "Server for NFS", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("NtFrs", "File Replication", "Role", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("nvagent", "Network Virtualization Service", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("OcspSvc", "Online Responder Service", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("PNRPAutoReg", "PNRP Machine Name Publication Service", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("PNRPsvc", "Peer Name Resolution Protocol", "Role", "Automatic", "Running"));
@@ -438,12 +447,16 @@ namespace check_services
             listWinServicesFromDefinition.Add(new WinServiceDefined("SMTPSVC", "Simple Mail Transfer Protocol (SMTP)", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("SNMP", "SNMP Service", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("SessionEnv", "Remote Desktop Configuration", "Role", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("SlbHostAgent", "Software Load Balancer Host Agent", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("SmbHash", "SMB Hash Generation Service", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("SmbWitness", "SMB Witness", "Role", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("SMS", "Storage Migration Service", "Role", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("SMSProxy", "Storage Migration Service Proxy", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("SrmReports", "File Server Storage Reports Manager", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("SrmSvc", "File Server Resource Manager", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("SstpSvc", "Secure Socket Tunneling Protocol Service", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("StorSvc", "Storage Service", "Role", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("StorageReplica", "StorageReplica", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("SyncShareSvc", "Windows Sync Share", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("SyncShareTTSvc", "Sync Share Token Translation Service", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("THREADORDER", "Thread Ordering Server", "Role", "Automatic", "Running"));
@@ -452,6 +465,7 @@ namespace check_services
             listWinServicesFromDefinition.Add(new WinServiceDefined("TSGateway", "Remote Desktop Gateway", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("TScPubRPC", "RemoteApp and Desktop Connection Management", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("TapiSrv", "Telephony", "Role", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("TargetMgr", "Target Manager", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("TermServLicensing", "Remote Desktop Licensing", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("TermService", "Remote Desktop Services", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("TieringEngineService", "Storage Tiers Management", "Role", "Automatic", "Running"));
@@ -486,9 +500,15 @@ namespace check_services
             listWinServicesFromDefinition.Add(new WinServiceDefined("smphost", "Microsoft Storage Spaces SMP", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("stisvc", "Windows Image Acquisition (WIA)", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("svsvc", "Spot Verifier", "Role", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("vmcompute", "Hyper-V Host Compute Service", "Role", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("vmms", "Hyper-V Virtual Machine Management", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("w3logsvc", "W3C Logging Service", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("wbengine", "Block Level Backup Engine Service", "Role", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("wcncsvc", "Windows Connect Now - Config Registrar", "Role", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("wercplsupport", "Problem Reports and Solutions Control Panel Support", "Role", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("WINS", "WINS", "Role", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("Wms", "MultiPoint Service", "Role", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("WmsRepair", "MultiPoint Repair Service", "Role", "Automatic", "Running"));
 
             // Supporting
             listWinServicesFromDefinition.Add(new WinServiceDefined("AeLookupSvc", "Application Experience", "Supporting", "Automatic", "Running"));
