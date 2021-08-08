@@ -518,11 +518,13 @@ namespace check_services
             listWinServicesFromDefinition.Add(new WinServiceDefined("Appinfo", "Application Information", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("AudioEndpointBuilder", "Windows Audio Endpoint Builder", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("Audiosrv", "Windows Audio", "Supporting", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("autotimesvc", "Cellular Time", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("AxInstSV", "ActiveX Installer (AxInstSV)", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("BDESVC", "BitLocker Drive Encryption Service", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("Browser", "Computer Browser", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("CDPSvc", "Connected Devices Platform Service", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("CertPropSvc", "Certificate Propagation", "Supporting", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("CPrepSrv", "CPrepSrv", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("CryptSvc", "Cryptographic Services", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("CscService", "Offline Files", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("DPS", "Diagnostic Policy Service", "Supporting", "Automatic", "Running"));
@@ -586,16 +588,21 @@ namespace check_services
             listWinServicesFromDefinition.Add(new WinServiceDefined("nsi", "Network Store Interface Service", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("p2pimsvc", "Peer Networking Identity Manager", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("sacsvr", "Special Administration Console Helper", "Supporting", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("SDRSVC", "Windows Backup", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("seclogon", "Secondary Logon", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("slsvc", "Software Licensing", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("sppsvc", "Software Protection", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("swprv", "Microsoft Software Shadow Copy Provider", "Supporting", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("UsoSvc", "Update Orchestrator Service", "Supporting", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("VacSvc", "Volumetric Audio Compositor Service", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("vds", "Virtual Disk", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("vmicguestinterface", "Hyper-V Guest Service Interface", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("vmickvpexchange", "Hyper-V Data Exchange Service", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("vmicrdv", "Hyper-V Remote Desktop Virtualization Service", "Supporting", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("WlanSvc", "WLAN AutoConfig", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("wlidsvc", "Microsoft Account Sign-in Assistant", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("wmiApSrv", "WMI Performance Adapter", "Supporting", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("wscsvc", "Security Center", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("wuauserv", "Windows Update", "Supporting", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("wudfsvc", "Windows Driver Foundation - User-mode Driver Framework", "Supporting", "Automatic", "Running"));
 
