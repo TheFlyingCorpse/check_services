@@ -110,7 +110,7 @@ namespace check_services
                     WinServiceDefined DefinedService = Definedservices.Value;
 
                     // If we have a match for a defined service.
-                    if (ActualService.ServiceName == DefinedService.ServiceName)
+                    if (ActualService.ServiceName.StartsWith(DefinedService.ServiceName))
                     {
                         returncode = CheckDefinedServices(returncode, ActualService, DefinedService, bDelayedGracePeriod, bIncludeCategoryInOutput, bWarningForServiceCategory);
                         PerfData.ServiceStatusCounting(ActualService.CurrentStatus);

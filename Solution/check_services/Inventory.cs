@@ -698,6 +698,27 @@ namespace check_services
             listWinServicesFromDefinition.Add(new WinServiceDefined("XboxGipSvc", "Xbox Accessory Management Service", "Ignored", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("XboxNetApiSvc", "Xbox Live Networking Service", "Ignored", "Automatic", "Running"));
 
+            // Ignored "startswith" services
+            listWinServicesFromDefinition.Add(new WinServiceDefined("BcastDVRUserService_", "GameDVR and Broadcast User Service_*", "Ignored", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("BluetoothUserService_", "Bluetooth User Support Service_*", "Ignored", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("CaptureService_", "CaptureService_*", "Ignored", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("cbdhsvc_", "Clipboard User Service_*", "Ignored", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("CDPUserSvc_", "Connected Devices Platform User Service_*", "Ignored", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("ConsentUxUserSvc_", "ConsentUX_*", "Ignored", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("CredentialEnrollmentManagerUserSvc_", "CredentialEnrollmentManagerUserSvc_*", "Ignored", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("DeviceAssociationBrokerSvc_", "DeviceAssociationBroker_*", "Ignored", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("DevicePickerUserSvc_", "DevicePicker_*", "Ignored", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("DevicesFlowUserSvc_", "DevicesFlow_*", "Ignored", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("MessagingService_", "MessagingService_*", "Ignored", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("OneSyncSvc_", "OneSyncSvc_*", "Ignored", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("PimIndexMaintenanceSvc_", "Contact Data_*", "Ignored", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("PrintWorkflowUserSvc_", "PrintWorkflow_*", "Ignored", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("UdkUserSvc_", "Udk User Service_*", "Ignored", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("UnistoreSvc_", "User Data Storage_*", "Ignored", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("UserDataSvc_", "UserDataSvc_*", "Ignored", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("WpnUserService_", "Windows Push Notifications User Service_*", "Ignored", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("AarSvc_", "Agent Activation Runtime_*", "Ignored", "Automatic", "Running"));
+
             return true;
         }
 
