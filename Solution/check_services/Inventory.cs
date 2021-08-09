@@ -382,7 +382,7 @@ namespace check_services
             listWinServicesFromDefinition.Add(new WinServiceDefined("LanmanWorkstation", "Workstation", "System", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("LSM", "Local Session Manager", "System", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("MpsSvc", "Windows Firewall", "System", "Automatic", "Running"));
-            listWinServicesFromDefinition.Add(new WinServiceDefined("mpssvc", "Windows Firewall", "System", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("mpssvc", "Windows Defender Firewall", "System", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("Netlogon", "Netlogon", "System", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("pla", "Performance Logs & Alerts", "System", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("Power", "Power", "System", "Automatic", "Running"));

@@ -13,7 +13,7 @@
 "LanmanWorkstation", "Workstation", "System", "Automatic", "Running"
 "LSM", "Local Session Manager", "System", "Automatic", "Running"
 "MpsSvc", "Windows Firewall", "System", "Automatic", "Running"
-"mpssvc", "Windows Firewall", "System", "Automatic", "Running"
+"mpssvc", "Windows Defender Firewall", "System", "Automatic", "Running"
 "Netlogon", "Netlogon", "System", "Automatic", "Running"
 "pla", "Performance Logs & Alerts", "System", "Automatic", "Running"
 "Power", "Power", "System", "Automatic", "Running"
