@@ -382,6 +382,7 @@ namespace check_services
             listWinServicesFromDefinition.Add(new WinServiceDefined("LanmanWorkstation", "Workstation", "System", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("LSM", "Local Session Manager", "System", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("MpsSvc", "Windows Firewall", "System", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("mpssvc", "Windows Firewall", "System", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("Netlogon", "Netlogon", "System", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("pla", "Performance Logs & Alerts", "System", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("Power", "Power", "System", "Automatic", "Running"));
@@ -390,6 +391,7 @@ namespace check_services
             listWinServicesFromDefinition.Add(new WinServiceDefined("RpcSs", "Remote Procedure Call (RPC)", "System", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("SamSs", "Security Accounts Manager", "System", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("Schedule", "Task Scheduler", "System", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("SgrmBroker", "System Guard Runtime Monitor Broker", "System", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("WinDefend", "Windows Defender Service", "System", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("Winmgmt", "Windows Management Instrumentation", "System", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("WinRM", "Windows Remote Management (WS-Management)", "System", "Automatic", "Running"));
@@ -621,6 +623,7 @@ namespace check_services
             listWinServicesFromDefinition.Add(new WinServiceDefined("ccmsetup", "ccmsetup", "Managed", "Automatic", "Stopped"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("CIMnotify", "HP Insight Event Notifier", "Managed", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("Cissesrv", "HP Smart Array SAS/SATA Event Notification Service", "Managed", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("CiscoTSAgent", "Cisco TS Agent", "Managed", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("CmRcService", "Configuration Manager Remote Control", "Managed", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("CpqNicMgmt", "HP Insight NIC Agents", "Managed", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("cpqvcagent", "HP Version Control Agent", "Managed", "Automatic", "Running"));
@@ -628,11 +631,13 @@ namespace check_services
             listWinServicesFromDefinition.Add(new WinServiceDefined("CqMgServ", "HP Insight Server Agents", "Managed", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("CqMgStor", "HP Insight Storage Agents", "Managed", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("EMET_Service", "Microsoft EMET Service", "Managed", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("Fortinet_TSAgent", "Fortinet SSO Terminal Server Agent", "Managed", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("HpAmsStor", "HP AMS Storage Service", "Managed", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("hpqams", "HP ProLiant Agentless Management Service", "Managed", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("HPWMISTOR", "HP WMI Storage Providers", "Managed", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("icinga2", "Icinga 2", "Managed", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("ietsms", "Intel Ethernet thermal Sensor Monitor Service", "Managed", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("MADService", "Check Point Managed Asset Detection", "Managed", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("mcollective", "Marionette Collective Server", "Managed", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("mtstrmd", "NetBackup Deduplication Multi-Threaded Agent", "Managed", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("NetBackup Client Service", "NetBackup Client Service", "Managed", "Automatic", "Running"));
@@ -658,6 +663,7 @@ namespace check_services
             listWinServicesFromDefinition.Add(new WinServiceDefined("SysMgmtHp", "HP System Management Homepage", "Managed", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("telegraf", "Telegraf Data Collector Service", "Managed", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("VGAuthService", "VMware Alias Manager and Ticket Service", "Managed", "Automatic", "Running"));
+            listWinServicesFromDefinition.Add(new WinServiceDefined("vm3dservice", "VMware SVGA Helper Service", "Managed", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("vmicheartbeat", "Hyper-V Heartbeat Service", "Managed", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("vmicshutdown", "Hyper-V Guest Shutdown Service", "Managed", "Automatic", "Running"));
             listWinServicesFromDefinition.Add(new WinServiceDefined("vmictimesync", "Hyper-V Time Synchronization Service", "Managed", "Automatic", "Running"));
